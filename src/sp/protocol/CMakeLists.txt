@@ -12,7 +12,6 @@ nng_directory(protocol)
 
 add_subdirectory(bus0)
 add_subdirectory(pair0)
-add_subdirectory(pair1)
 add_subdirectory(pipeline0)
 add_subdirectory(pubsub0)
 add_subdirectory(reqrep0)

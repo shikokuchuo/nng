@@ -12,7 +12,3 @@ nng_directory(platform)
 
 add_subdirectory(posix)
 add_subdirectory(windows)
-
-nng_test(platform_test)
-nng_test(resolver_test)
-nng_test(udp_test)

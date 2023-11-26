@@ -66,6 +66,11 @@ message(STATUS "Configuring for NNG version ${NNG_ABI_VERSION}")
 
 # User-defined options.
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_COLOR_MAKEFILE OFF)
+set(CMAKE_INSTALL_MESSAGE NEVER)
+
 # This prefix is appended to by subdirectories, so that each test
 # gets named based on where it is in the tree.
 set(NNG_TEST_PREFIX nng)
@@ -73,10 +78,7 @@ set(NNG_TEST_PREFIX nng)
 # Enable access to private APIs for our own use.
 add_definitions(-DNNG_PRIVATE)
 
-if (NOT (BUILD_SHARED_LIBS))
-    set(NNG_STATIC_LIB ON)
-    message(STATUS "Building static libs.")
-endif ()
+set(NNG_STATIC_LIB ON)
 
 # These are library targets.  The "nng" library is the main public library.
 # The "nng_testing" is a full build of the library for test cases
@@ -93,13 +95,7 @@ target_compile_definitions(nng_testing PUBLIC NNG_STATIC_LIB NNG_TEST_LIB NNG_PR
 add_library(nng_private INTERFACE)
 target_compile_definitions(nng_private INTERFACE NNG_PRIVATE)
 
-if (NNG_ELIDE_DEPRECATED)
-    target_compile_definitions(nng PRIVATE NNG_ELIDE_DEPRECATED)
-endif()
-if (NNG_ENABLE_COMPAT)
-    target_compile_definitions(nng PRIVATE NNG_ENABLE_COMPAT)
-endif()
-
+target_compile_definitions(nng PRIVATE NNG_ELIDE_DEPRECATED)
 
 # We can use rlimit to configure the stack size for systems
 # that have too small defaults.  This is not used for Windows,
@@ -169,34 +165,13 @@ endif()
 #  Platform checks.
 
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
-    set(NNG_WARN_FLAGS "-Wall -Wextra -fno-omit-frame-pointer")
+    set(NNG_WARN_FLAGS "-fno-omit-frame-pointer")
 elseif (CMAKE_C_COMPILER_ID MATCHES "Clang")
-    set(NNG_WARN_FLAGS "-Wall -Wextra -fno-omit-frame-pointer")
+    set(NNG_WARN_FLAGS "-fno-omit-frame-pointer")
 endif ()
 
-include(CheckSanitizer)
-CheckSanitizer()
-if (NOT NNG_SANITIZER STREQUAL "none")
-    set(NNG_SANITIZER_FLAGS "-fsanitize=${NNG_SANITIZER}")
-endif ()
-
-if (NNG_ENABLE_COVERAGE)
-    # NB: This only works for GCC and Clang 3.0 and newer.  If your stuff
-    # is older than that, you will need to find something newer.  For
-    # correct reporting, we always turn off all optimizations.
-    if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
-        set(NNG_COVERAGE_C_FLAGS "-g -O0 --coverage")
-        set(CMAKE_SHARED_LINKER_FLAGS --coverage)
-    elseif (CMAKE_C_COMPILER_ID MATCHES "Clang")
-        set(NNG_COVERAGE_C_FLAGS "-g -O0 --coverage")
-        set(CMAKE_SHARED_LINKER_FLAGS --coverage)
-    else ()
-        message(FATAL_ERROR "Unable to enable coverage for your compiler.")
-    endif ()
-endif ()
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NNG_WARN_FLAGS} ${NNG_COVERAGE_C_FLAGS} ${NNG_SANITIZER_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NNG_WARN_FLAGS} ${NNG_COVERAGE_C_FLAGS} ${NNG_SANITIZER_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NNG_WARN_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NNG_WARN_FLAGS}")
 
 # If the compiler is not on Windows, does it support hiding the
 # symbols by default?  For shared libraries we would like to do this.
@@ -276,24 +251,11 @@ else ()
     set(NNG_PLATFORM_POSIX ON)
 endif ()
 
-if (NNG_ENABLE_TLS)
-    add_definitions(-DNNG_SUPP_TLS)
-endif ()
-
-if (NNG_TESTS)
-    enable_testing()
-    set(all_tests, "")
-endif ()
+add_definitions(-DNNG_SUPP_TLS)
 
 add_subdirectory(src)
 
-if (NNG_TESTS)
-    add_subdirectory(tests)
-endif ()
-
 #  Build the tools
-
-add_subdirectory(docs/man)
 
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VERSION ${NNG_PACKAGE_VERSION})

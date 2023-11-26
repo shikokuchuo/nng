@@ -19,6 +19,3 @@ nng_sources_if(NNG_PROTO_SUB0 sub.c xsub.c)
 nng_headers_if(NNG_PROTO_SUB0 nng/protocol/pubsub0/sub.h)
 nng_defines_if(NNG_PROTO_SUB0 NNG_HAVE_SUB0)
 
-nng_test(pub_test)
-nng_test(sub_test)
-nng_test(xsub_test)
