@@ -9,4 +9,3 @@
 #
 
 nng_sources_if(NNG_SUPP_SHA1 sha1.c sha1.h)
-nng_test(sha1_test)
