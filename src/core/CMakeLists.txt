@@ -74,14 +74,3 @@ nng_sources(
         url.h
 )
 
-nng_test(aio_test)
-nng_test(buf_size_test)
-nng_test(errors_test)
-nng_test(id_test)
-nng_test(init_test)
-nng_test(list_test)
-nng_test(message_test)
-nng_test(reconnect_test)
-nng_test(sock_test)
-nng_test(stats_test)
-nng_test(url_test)

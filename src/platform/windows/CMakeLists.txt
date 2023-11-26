@@ -48,6 +48,4 @@ if (NNG_PLATFORM_WINDOWS)
             win_udp.c
     )
 
-    nng_test(win_ipc_sec_test)
-
 endif ()

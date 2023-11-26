@@ -8,7 +8,7 @@
 # found online at https://opensource.org/licenses/MIT.
 #
 
-nng_sources(nng.c nng_legacy.c)
+nng_sources(nng.c)
 nng_headers(nng/nng.h)
 
 target_include_directories(nng PRIVATE ${PROJECT_SOURCE_DIR}/src)
@@ -18,8 +18,6 @@ add_subdirectory(core)
 add_subdirectory(platform)
 add_subdirectory(sp)
 add_subdirectory(supplemental)
-add_subdirectory(tools)
-add_subdirectory(testing)
 
 if (NNG_ENABLE_COMPAT)
     add_subdirectory(compat)
@@ -28,15 +26,8 @@ endif()
 # When building shared libraries we prefer to suppress default symbol
 # visibility, so that only the symbols that should be exposed in the
 # resulting library are.  This is the default with Windows.
-if (BUILD_SHARED_LIBS)
-    target_compile_definitions(nng PRIVATE NNG_SHARED_LIB)
-    if (NNG_HIDDEN_VISIBILITY)
-        target_compile_definitions(nng PRIVATE NNG_HIDDEN_VISIBILITY)
-        set_target_properties(nng PROPERTIES C_VISIBILITY_PRESET hidden)
-    endif ()
-else ()
-    target_compile_definitions(nng PUBLIC NNG_STATIC_LIB)
-endif ()
+
+target_compile_definitions(nng PUBLIC NNG_STATIC_LIB)
 
 set_target_properties(nng PROPERTIES SOVERSION ${NNG_ABI_SOVERSION} VERSION "${NNG_ABI_VERSION}")
 

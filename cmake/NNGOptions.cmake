@@ -18,15 +18,15 @@ else ()
 endif ()
 
 # Global options.
-option(BUILD_SHARED_LIBS "Build shared library" ${BUILD_SHARED_LIBS})
+option(BUILD_SHARED_LIBS "Build shared library" OFF)
 
 # We only build command line tools and tests if we are not in a
 # cross-compile situation.  Cross-compiling users who still want to
 # build these must enable them explicitly.  Some of these switches
 # must be enabled rather early as we use their values later.
-option(NNG_TESTS "Build and run tests." ${NNG_NATIVE_BUILD})
-option(NNG_TOOLS "Build extra tools." ${NNG_NATIVE_BUILD})
-option(NNG_ENABLE_NNGCAT "Enable building nngcat utility." ${NNG_TOOLS})
+option(NNG_TESTS "Build and run tests." OFF)
+option(NNG_TOOLS "Build extra tools." OFF)
+option(NNG_ENABLE_NNGCAT "Enable building nngcat utility." OFF)
 option(NNG_ENABLE_COVERAGE "Enable coverage reporting." OFF)
 # Eliding deprecated functionality can be used to build a slimmed down
 # version of the library, or alternatively to test for application
@@ -37,7 +37,7 @@ option(NNG_ENABLE_COVERAGE "Enable coverage reporting." OFF)
 # availability for existing compiled applications.
 # Note: Currently this breaks the test suite, so we only do it
 # for the public library.
-option(NNG_ELIDE_DEPRECATED "Elide deprecated functionality." OFF)
+option(NNG_ELIDE_DEPRECATED "Elide deprecated functionality." ON)
 
 # Turning off the compatibility layer can save some space, and
 # compilation time, but may break legacy applications  It should
@@ -54,7 +54,7 @@ mark_as_advanced(NNG_PROTO_BUS0)
 option (NNG_PROTO_PAIR0 "Enable PAIRv0 protocol." ON)
 mark_as_advanced(NNG_PROTO_PAIR0)
 
-option (NNG_PROTO_PAIR1 "Enable PAIRv1 protocol." ON)
+option (NNG_PROTO_PAIR1 "Enable PAIRv1 protocol." OFF)
 mark_as_advanced(NNG_PROTO_PAIR1)
 
 option (NNG_PROTO_PUSH0 "Enable PUSHv0 protocol." ON)
@@ -85,7 +85,7 @@ mark_as_advanced(NNG_PROTO_SURVEYOR0)
 
 # Enabling TLS is required to enable support for the TLS transport
 # and WSS.  It does require a 3rd party TLS engine to be selected.
-option(NNG_ENABLE_TLS "Enable TLS support." OFF)
+option(NNG_ENABLE_TLS "Enable TLS support." ON)
 if (NNG_ENABLE_TLS)
     set(NNG_SUPP_TLS ON)
 endif ()

@@ -8,11 +8,14 @@
 #
 
 if (NNG_TLS_ENGINE STREQUAL "mbed")
+<<<<<<< HEAD
     message(WARNING "
         ************************************************************
         Linking against Mbed TLS may change license terms.
         Consult a lawyer and the license files for details.
         ************************************************************")
+=======
+>>>>>>> 4c9b751c (libnng 1.7.0 bundle for nanonext)
     nng_sources(tls.c)
     nng_defines(NNG_TLS_ENGINE_INIT=nng_tls_engine_init_mbed)
     nng_defines(NNG_TLS_ENGINE_FINI=nng_tls_engine_fini_mbed)
