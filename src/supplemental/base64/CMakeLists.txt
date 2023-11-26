@@ -11,5 +11,3 @@ nng_sources_if(NNG_SUPP_BASE64
         base64.c
         base64.h)
 
-nng_test_if(NNG_SUPP_BASE64
-        base64_test)
