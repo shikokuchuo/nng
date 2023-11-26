@@ -26,7 +26,7 @@
 # Set ``MBEDTLS_ROOT_DIR`` to the root directory of Mbed TLS installation.
 #
 
-set(_MBEDTLS_ROOT_HINTS ${MBEDTLS_ROOT_DIR} ENV MBEDTLS_ROOT_DIR)
+set(_MBEDTLS_ROOT_HINTS ${CMAKE_INSTALL_PREFIX} ENV MBEDTLS_ROOT_DIR)
 
 include(FindPackageHandleStandardArgs)
 

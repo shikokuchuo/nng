@@ -73,6 +73,7 @@ nng_sources(
         url.c
         url.h
 )
+<<<<<<< HEAD
 
 nng_test(aio_test)
 nng_test(buf_size_test)
@@ -85,3 +86,5 @@ nng_test(reconnect_test)
 nng_test(sock_test)
 nng_test(stats_test)
 nng_test(url_test)
+=======
+>>>>>>> ce400877 (libnng 1.6.0 bundle for nanonext)

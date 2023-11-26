@@ -14,4 +14,4 @@ nng_directory(ipc)
 nng_sources_if(NNG_TRANSPORT_IPC ipc.c)
 nng_headers_if(NNG_TRANSPORT_IPC nng/transport/ipc/ipc.h)
 nng_defines_if(NNG_TRANSPORT_IPC NNG_TRANSPORT_IPC)
-nng_test_if(NNG_TRANSPORT_IPC ipc_test)
+
