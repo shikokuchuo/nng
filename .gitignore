@@ -12,3 +12,4 @@ etc/nng.sublime-workspace
 cmake-build-*
 docs/**/*.html
 .Rproj.user
+.Rhistory
