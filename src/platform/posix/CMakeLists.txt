@@ -112,6 +112,4 @@ if (NNG_PLATFORM_POSIX)
         nng_sources(posix_rand_urandom.c)
     endif ()
 
-    nng_test(posix_ipcwinsec_test)
-
 endif ()
