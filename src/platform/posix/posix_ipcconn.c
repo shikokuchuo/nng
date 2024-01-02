@@ -489,3 +489,4 @@ nni_posix_ipc_init(nni_ipc_conn *c, nni_posix_pfd *pfd)
 {
 	c->pfd = pfd;
 }
+
