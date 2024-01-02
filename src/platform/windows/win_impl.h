@@ -25,9 +25,6 @@
 
 #include "core/list.h"
 
-// These types are provided for here, to permit them to be directly inlined
-// elsewhere.
-
 struct nni_plat_thr {
 	void (*func)(void *);
 	void  *arg;
@@ -83,10 +80,6 @@ struct nni_atomic_u64 {
 struct nni_atomic_ptr {
 	LONGLONG v;
 };
-
-// nni_win_io is used with io completion ports.  This allows us to get
-// to a specific completion callback without requiring the poller (in the
-// completion port) to know anything about the event itself.
 
 typedef struct nni_win_io nni_win_io;
 typedef void (*nni_win_io_cb)(nni_win_io *, int, size_t);

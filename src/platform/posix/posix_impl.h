@@ -11,12 +11,6 @@
 #ifndef PLATFORM_POSIX_IMPL_H
 #define PLATFORM_POSIX_IMPL_H
 
-// Some dependency notes:
-//
-// NNG_PLATFORM_POSIX_THREAD depends on NNG_PLATFORM_POSIX_CLOCK.  Also,
-// when using NNG_PLATFORM_POSIX_CLOCK, your condition variable timeouts need
-// to use the same base clock values.  Normally these should be used
-// together.  Almost everything depends on NNG_PLATFORM_POSIX_DEBUG.
 #ifdef NNG_PLATFORM_POSIX
 #define NNG_PLATFORM_POSIX_ALLOC
 #define NNG_PLATFORM_POSIX_DEBUG
@@ -46,13 +40,9 @@ extern int nni_plat_errno(int);
 
 #endif
 
-// Define types that this platform uses.
 #ifdef NNG_PLATFORM_POSIX_THREAD
 
 #include <pthread.h>
-
-// These types are provided for here, to permit them to be directly inlined
-// elsewhere.
 
 struct nni_plat_mtx {
 	pthread_mutex_t mtx;
@@ -72,16 +62,11 @@ struct nni_rwlock {
 		PTHREAD_RWLOCK_INITIALIZER \
 	}
 
-// No static form of CV initialization because of the need to use
-// attributes to set the clock type.
 struct nni_plat_cv {
 	pthread_cond_t cv;
 	nni_plat_mtx  *mtx;
 };
 
-// NOTE: condition variables initialized with this should *NOT*
-// be used with nni_cv_until -- the clock attributes are not passed
-// and the wake-up times will not be correct.
 #define NNI_CV_INITIALIZER(mxp)                            \
 	{                                                  \
 		.mtx = mxp, .cv = PTHREAD_COND_INITIALIZER \

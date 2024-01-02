@@ -20,51 +20,24 @@ typedef struct nni_task  nni_task;
 extern int  nni_taskq_init(nni_taskq **, int);
 extern void nni_taskq_fini(nni_taskq *);
 
-// nni_task_dispatch sends the task to the queue.  It is guaranteed to
-// succeed.  (If the queue is shutdown, then the behavior is undefined.)
 extern void nni_task_dispatch(nni_task *);
 
-// nni_task_exec runs the task synchronously, if possible.  (Under certain
-// circumstances the task must be run asynchronously.)  The caller is
-// responsible for ensuring that it does not hold any resources which might
-// be acquired by the task itself; otherwise deadlock may occur.  (When in
-// doubt, use nni_task_dispatch instead.)
 extern void nni_task_exec(nni_task *);
 
-// nni_task_prep is used by and exclusively for the aio framework.
-// nni_task_prep marks the task as "scheduled" without actually
-// dispatching anything to it yet; nni_task_wait will block waiting for the
-// task to complete normally (after a call to nni_task_dispatch or
-// nni_task_exec).
 extern void nni_task_prep(nni_task *);
 
-// nni_task_abort is called to undo the effect of nni_task_prep,
-// basically. The aio framework uses this when nni_aio_schedule()
-// returns an error.
 extern void nni_task_abort(nni_task *);
 
-// nni_task_busy checks to see if a task is still busy.
-// This is uses the same check that nni_task_wait uses.
 extern bool nni_task_busy(nni_task *);
 
-// nni_task_wait waits for the task to complete.  If additional
-// work is scheduled on the task then it will not return until that
-// work (or any other work subsequently scheduled) is complete.
 extern void nni_task_wait(nni_task *);
 extern void  nni_task_init(nni_task *, nni_taskq *, nni_cb, void *);
 
-// nni_task_fini destroys the task.  It will reap resources asynchronously
-// if the task is currently executing.  Use nni_task_wait() first if the
-// callback must be stopped entirely before destroying the task (such as if
-// it reschedules the task.)
 extern void nni_task_fini(nni_task *);
 
 extern int  nni_taskq_sys_init(void);
 extern void nni_taskq_sys_fini(void);
 
-// nni_task implementation details are not to be used except by the
-// nni_task_framework.  Placing here allows for inlining this in
-// consuming structures.
 struct nni_task {
 	nni_list_node task_node;
 	void *        task_arg;
