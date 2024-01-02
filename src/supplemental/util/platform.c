@@ -165,8 +165,3 @@ nng_random(void)
 	return (nni_random());
 }
 
-int
-nng_socket_pair(int *fds)
-{
-	return (nni_socket_pair(fds));
-}

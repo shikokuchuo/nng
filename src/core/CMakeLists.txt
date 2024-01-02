@@ -24,8 +24,6 @@ nng_sources(
         device.h
         dialer.c
         dialer.h
-        sockfd.c
-        sockfd.h
         file.c
         file.h
         idhash.c

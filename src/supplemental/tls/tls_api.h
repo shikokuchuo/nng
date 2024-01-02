@@ -14,8 +14,6 @@
 
 #include <nng/supplemental/tls/tls.h>
 
-// The implementation supplies this function to create the TLS connection
-// object.  All fields will be zeroed.
 extern int nni_tls_dialer_alloc(nng_stream_dialer **, const nng_url *);
 extern int nni_tls_listener_alloc(nng_stream_listener **, const nng_url *);
 

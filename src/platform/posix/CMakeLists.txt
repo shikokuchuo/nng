@@ -61,7 +61,6 @@ if (NNG_PLATFORM_POSIX)
     nng_check_sym(LOCAL_PEERPID sys/un.h NNG_HAVE_LOCALPEERPID)
     nng_check_sym(getpeerucred ucred.h NNG_HAVE_GETPEERUCRED)
     nng_check_sym(atomic_flag_test_and_set stdatomic.h NNG_HAVE_STDATOMIC)
-    nng_check_sym(socketpair sys/socket.h NNG_HAVE_SOCKETPAIR)
 
     nng_sources(
             posix_impl.h
@@ -83,8 +82,6 @@ if (NNG_PLATFORM_POSIX)
             posix_pipe.c
             posix_resolv_gai.c
             posix_sockaddr.c
-            posix_socketpair.c
-            posix_sockfd.c
             posix_tcpconn.c
             posix_tcpdial.c
             posix_tcplisten.c

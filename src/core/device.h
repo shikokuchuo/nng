@@ -10,10 +10,6 @@
 #ifndef CORE_DEVICE_H
 #define CORE_DEVICE_H
 
-// Device takes messages from one side, and forwards them to the other.
-// It works in both directions.  Arguably we should build versions of this
-// that are unidirectional, and we could extend this API with user-defined
-// filtering functions.
 extern void nni_device(nni_aio *aio, nni_sock *, nni_sock *);
 
 #endif // CORE_DEVICE_H

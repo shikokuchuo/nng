@@ -12,9 +12,6 @@
 
 #include "nng_impl.h"
 
-// nni_lmq is a very lightweight message queue.  Defining it this way allows
-// us to share some common code.  Locking must be supplied by the caller.
-// For performance reasons, this is allocated inline.
 typedef struct nni_lmq {
 	size_t    lmq_cap;
 	size_t    lmq_alloc; // alloc is cap, rounded up to power of 2

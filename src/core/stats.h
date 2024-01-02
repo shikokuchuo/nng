@@ -13,16 +13,6 @@
 
 #include "core/defs.h"
 
-// Statistics support.  This is inspired in part by the Solaris
-// kernel stats framework, but we've simplified and tuned it for our use.
-//
-// Collection of the stats will be done in two steps.  First we
-// will walk the list of stats, with the chain held, allocating
-// a user local copy of the stat and pointers.
-//
-// In phase 2, we run the update, and copy the values. We conditionally
-// acquire the lock on the stat first though.
-
 typedef struct nni_stat_item nni_stat_item;
 typedef struct nni_stat_info nni_stat_info;
 
@@ -30,11 +20,6 @@ typedef void (*nni_stat_update)(nni_stat_item *);
 typedef enum nng_stat_type_enum nni_stat_type;
 typedef enum nng_unit_enum      nni_stat_unit;
 
-// nni_stat_item is used by providers.  Providers should avoid accessing
-// this directly, but use accessors below.  It is important that we offer
-// this structure so that providers can declare them inline, in order to
-// avoid having to spend dereference costs or (worse) to have to include
-// extra conditionals on hot code paths.
 struct nni_stat_item {
 	nni_list_node        si_node;     // list node, framework use only
 	nni_list             si_children; // children, framework use only
@@ -58,15 +43,10 @@ struct nni_stat_info {
 	bool            si_alloc : 1;  // stat string is allocated
 };
 
-// nni_stat_add adds a statistic, but the operation is unlocked, and the
-// add is to an unregistered stats tree.
 void nni_stat_add(nni_stat_item *, nni_stat_item *);
 
-// nni_stat_register registers a statistic tree into the global tree.
-// The tree is rooted at the root.  This is a locked operation.
 void nni_stat_register(nni_stat_item *);
 
-// nni_stat_unregister removes the entire tree.  This is a locked operation.
 void nni_stat_unregister(nni_stat_item *);
 
 void nni_stat_set_value(nni_stat_item *, uint64_t);

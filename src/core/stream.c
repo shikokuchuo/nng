@@ -15,7 +15,6 @@
 #include "core/nng_impl.h"
 #include <nng/supplemental/tls/tls.h>
 
-#include "core/sockfd.h"
 #include "core/tcp.h"
 #include "supplemental/tls/tls_api.h"
 #include "supplemental/websocket/websocket.h"
@@ -95,13 +94,6 @@ static struct {
 	    .dialer_alloc   = nni_ws_dialer_alloc,
 	    .listener_alloc = nni_ws_listener_alloc,
 	},
-#ifdef NNG_TRANSPORT_FDC
-	{
-	    .scheme         = "socket",
-	    .dialer_alloc   = nni_sfd_dialer_alloc,
-	    .listener_alloc = nni_sfd_listener_alloc,
-	},
-#endif
 	{
 	    .scheme = NULL,
 	},
@@ -287,8 +279,6 @@ nng_stream_listener_alloc(nng_stream_listener **lp, const char *uri)
 	nng_url_free(url);
 	return (rv);
 }
-
-// Public stream options.
 
 int
 nng_stream_get(nng_stream *s, const char *n, void *v, size_t *szp)
