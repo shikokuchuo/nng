@@ -11,12 +11,6 @@
 #ifndef PLATFORM_POSIX_AIO_H
 #define PLATFORM_POSIX_AIO_H
 
-// This file defines structures we will use for emulating asynchronous I/O
-// on POSIX.  POSIX lacks the support for callback based asynchronous I/O
-// that we have on Windows, although it has a non-widely support aio layer
-// that is not very performant on many systems.   So we emulate this using
-// one of several possible different backends.
-
 #include "core/nng_impl.h"
 #include "posix_pollq.h"
 

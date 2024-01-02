@@ -12,9 +12,6 @@
 
 #include "core/nng_impl.h"
 
-// These are interfaces we use for TCP internally.  These are not exposed
-// to the public API.
-
 extern int nni_tcp_dialer_alloc(nng_stream_dialer **, const nng_url *);
 extern int nni_tcp_listener_alloc(nng_stream_listener **, const nng_url *);
 

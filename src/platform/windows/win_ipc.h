@@ -12,8 +12,6 @@
 #ifndef PLATFORM_WIN_WINIPC_H
 #define PLATFORM_WIN_WINIPC_H
 
-// This header file is private to the IPC (named pipes) support for Windows.
-
 #include "core/nng_impl.h"
 #include "win_impl.h"
 

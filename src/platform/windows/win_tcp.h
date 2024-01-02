@@ -12,8 +12,6 @@
 #ifndef PLATFORM_WIN_WINTCP_H
 #define PLATFORM_WIN_WINTCP_H
 
-// This header file is private to the TCP support for Windows.
-
 #include "core/nng_impl.h"
 
 struct nni_tcp_conn {

@@ -11,10 +11,6 @@
 #ifndef CORE_SOCKIMPL_H
 #define CORE_SOCKIMPL_H
 
-// This file contains stuff shared within the core between sockets, endpoints,
-// and pipes.  This must not be exposed to other subsystems -- these internals
-// are subject to change at any time.
-
 struct nni_dialer {
 	nni_sp_dialer_ops d_ops;  // transport ops
 	nni_sp_tran      *d_tran; // transport pointer

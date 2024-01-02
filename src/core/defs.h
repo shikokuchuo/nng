@@ -13,9 +13,6 @@
 
 #include <stdint.h>
 
-// C compilers may get unhappy when named arguments are not used.  While
-// there are things like __attribute__((unused)) which are arguably
-// superior, support for such are not universal.
 #define NNI_ARG_UNUSED(x) ((void) x)
 
 #ifndef NDEBUG
@@ -26,18 +23,14 @@
 #define NNI_ASSERT(x) ((void)(0))
 #endif
 
-// Returns the size of an array in elements. (Convenience.)
 #define NNI_NUM_ELEMENTS(x) ((unsigned) (sizeof(x) / sizeof((x)[0])))
 
-// These types are common but have names shared with user space.
-// Internal code should use these names when possible.
 typedef nng_msg      nni_msg;
 typedef nng_sockaddr nni_sockaddr;
 typedef nng_url      nni_url;
 typedef nng_iov      nni_iov;
 typedef nng_aio      nni_aio;
 
-// These are our own names.
 typedef struct nni_socket   nni_sock;
 typedef struct nni_ctx      nni_ctx;
 typedef struct nni_dialer   nni_dialer;
@@ -64,12 +57,10 @@ typedef int32_t  nni_duration; // Rel. time (ms).
 
 typedef void (*nni_cb)(void *);
 
-// Some default timing things.
 #define NNI_TIME_NEVER ((nni_time) -1)
 #define NNI_TIME_ZERO ((nni_time) 0)
 #define NNI_SECOND (1000)
 
-// Structure allocation conveniences.
 #define NNI_ALLOC_STRUCT(s) nni_zalloc(sizeof(*s))
 #define NNI_FREE_STRUCT(s) nni_free((s), sizeof(*s))
 #define NNI_ALLOC_STRUCTS(s, n) nni_zalloc(sizeof(*s) * n)
@@ -121,20 +112,14 @@ typedef void (*nni_cb)(void *);
 	    (((uint64_t) ((uint8_t) (ptr)[6])) << 8u) +  \
 	    (((uint64_t) (uint8_t) (ptr)[7]))
 
-// This increments a pointer a fixed number of byte cells.
 #define NNI_INCPTR(ptr, n) ((ptr) = (void *) ((char *) (ptr) + (n)))
 
-// Alignment -- this is used when allocating adjacent objects to ensure
-// that each object begins on a natural alignment boundary.
 #define NNI_ALIGN_SIZE sizeof(void *)
 #define NNI_ALIGN_MASK (NNI_ALIGN_SIZE - 1)
 #define NNI_ALIGN_UP(sz) (((sz) + NNI_ALIGN_MASK) & ~NNI_ALIGN_MASK)
 
-// A few assorted other items.
 #define NNI_FLAG_IPV4ONLY 1
 
-// Types.  These are used to provide more structured access to options
-// (and maybe later statistics).  For now these are internal only.
 typedef enum {
 	NNI_TYPE_OPAQUE,
 	NNI_TYPE_BOOL,
@@ -151,29 +136,17 @@ typedef enum {
 
 typedef nni_type nni_opt_type;
 
-// NNI_MAX_MAX_TTL is the maximum value that MAX_TTL can be set to -
-// i.e. the number of nng_device boundaries that a message can traverse.
-// This value drives the size of pre-allocated headers and back-trace
-// buffers -- we need 4 bytes for each hop, plus 4 bytes for the request
-// identifier.  Thus, it is recommended not to set this value too large.
-// (It is possible to scale out to inconceivably large networks with
-// only a few hops - we have yet to see more than 4 in practice.)
 #ifndef NNI_MAX_MAX_TTL
 #define NNI_MAX_MAX_TTL 15
 #endif
 
-// NNI_MAX_HEADER_SIZE is our header size.
 #define NNI_MAX_HEADER_SIZE ((NNI_MAX_MAX_TTL + 1) * sizeof(uint32_t))
 
-// NNI_EXPIRE_BATCH lets us handle expiration in batches,
-// reducing the number of traverses of the expiration list we perform.
 #ifndef NNI_EXPIRE_BATCH
 #define NNI_EXPIRE_BATCH 100
 #endif
 
 #if __GNUC__ > 3
-// NNI_GCC_VERSION is used to indicate a GNU version.  It is used
-// to trigger certain cases like atomics that might be compiler specific.
 #define NNI_GCC_VERSION \
 	(__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #endif

@@ -12,8 +12,6 @@
 
 #include "core/defs.h"
 
-// In order to make life easy, we just define the list structures
-// directly, and let consumers directly inline structures.
 typedef struct nni_list_node {
 	struct nni_list_node *ln_next;
 	struct nni_list_node *ln_prev;
@@ -29,9 +27,6 @@ extern void nni_list_init_offset(nni_list *list, size_t offset);
 #define NNI_LIST_INIT(list, type, field) \
 	nni_list_init_offset(list, offsetof(type, field))
 
-// NNI_LIST_INITIALIZER is used to initialize structures at declaration time.
-// The list argument is the structure being initialized and the type and
-// offset determine where the node lives within each item.
 #define NNI_LIST_INITIALIZER(list, type, field)          \
 	{                                                \
 		.ll_head.ln_next = &(list).ll_head,      \
