@@ -10,7 +10,6 @@
 #  Transports.
 nng_directory(transport)
 
-add_subdirectory(socket)
 add_subdirectory(inproc)
 add_subdirectory(ipc)
 add_subdirectory(tcp)

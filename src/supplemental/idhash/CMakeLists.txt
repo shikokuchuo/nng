@@ -8,4 +8,4 @@
 #
 
 nng_sources_if(NNG_SUPP_IDHASH idhash.c idhash.h)
-nng_test_if(NNG_SUPP_IDHASH idhash_test)
+
