@@ -11,8 +11,6 @@
 #ifndef CORE_STRS_H
 #define CORE_STRS_H
 
-// Safe string functions, in case the platform misses these.
-
 extern char * nni_strdup(const char *);
 extern void   nni_strfree(char *);
 extern size_t nni_strlcpy(char *, const char *, size_t);

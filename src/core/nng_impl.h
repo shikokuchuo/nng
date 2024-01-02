@@ -12,16 +12,6 @@
 
 #include "nng/nng.h"
 
-// Internal implementation things for NNG, common definitions, etc.
-// All internal modules wind up including this file to avoid having
-// to figure out which header(s) to include.
-//
-// Hopefully it should be clear by the name that this file and its contents
-// are *NOT* for use outside of this library.
-//
-// Symbols that are private to the library begin with the nni_ prefix, whereas
-// those starting with nng_ are intended for external consumption.  The latter
-// symbols should be found in the toplevel nng.h header.
 #include "core/defs.h"
 
 #include "core/platform.h"

@@ -13,22 +13,9 @@
 
 #include "core/defs.h"
 
-// We find that we often want to have a list of things listed by a
-// numeric ID, which is generally monotonically increasing.  This is
-// most often a pipe ID.  To help keep collections of these things
-// indexed by their ID (which might start from a very large value),
-// we offer a hash table.  The hash table uses open addressing, but
-// we use a better probe (taken from Python) to avoid hitting the same
-// positions.  Our hash algorithm is just the low order bits, and we
-// use table sizes that are powers of two.  Note that hash items
-// must be non-NULL.  The table is protected by an internal lock.
-
 typedef struct nni_id_map   nni_id_map;
 typedef struct nni_id_entry nni_id_entry;
 
-// NB: These details are entirely private to the hash implementation.
-// They are provided here to facilitate inlining in structures.
-// We can support at most 2^32 ~ 4 billion ~ entries.
 struct nni_id_map {
 	uint32_t      id_flags;
 	uint32_t      id_cap;
