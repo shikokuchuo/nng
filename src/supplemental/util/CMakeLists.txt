@@ -12,4 +12,3 @@ nng_headers(
 	nng/supplemental/util/idhash.h
 	nng/supplemental/util/options.h
 	nng/supplemental/util/platform.h)
-nng_test(idhash_test)

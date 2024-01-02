@@ -51,7 +51,7 @@ extern "C" {
 
 #define NNG_MAXADDRLEN (128)
 
-#define NNG_PROTOCOL_NUMBER(maj, min) (((x) *16) + (y))
+#define NNG_PROTOCOL_NUMBER(maj, min) (((x) * 16) + (y))
 
 typedef struct nng_ctx_s {
 	uint32_t id;
@@ -81,7 +81,6 @@ typedef struct nng_msg  nng_msg;
 typedef struct nng_stat nng_stat;
 typedef struct nng_aio  nng_aio;
 
-// Initializers.
 // clang-format off
 #define NNG_PIPE_INITIALIZER { 0 }
 #define NNG_SOCKET_INITIALIZER { 0 }
@@ -372,7 +371,11 @@ NNG_DECL bool nng_aio_begin(nng_aio *);
 
 NNG_DECL void nng_aio_finish(nng_aio *, int);
 
+<<<<<<< HEAD
 typedef void (*nng_aio_cancelfn)(nng_aio *, void *, int);
+=======
+typedef void  (*nng_aio_cancelfn)(nng_aio *, void *, int);
+>>>>>>> 410a83c4 (fix for NNG 1.7.2)
 
 NNG_DECL void nng_aio_defer(nng_aio *, nng_aio_cancelfn, void *);
 
@@ -441,7 +444,10 @@ NNG_DECL nng_socket   nng_pipe_socket(nng_pipe);
 NNG_DECL nng_dialer   nng_pipe_dialer(nng_pipe);
 NNG_DECL nng_listener nng_pipe_listener(nng_pipe);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 410a83c4 (fix for NNG 1.7.2)
 #define NNG_FLAG_ALLOC 1u    // Recv to allocate receive buffer
 #define NNG_FLAG_NONBLOCK 2u // Non-blocking operations
 
@@ -766,6 +772,7 @@ enum {
 	NNG_INIT_MAX_POLLER_THREADS,
 };
 
+<<<<<<< HEAD
 typedef enum nng_log_level {
 	NNG_LOG_NONE   = 0, // used for filters only, NNG suppresses these
 	NNG_LOG_ERR    = 3,
@@ -818,6 +825,8 @@ NNG_DECL void nng_log_debug(const char *msgid, const char *msg, ...);
 NNG_DECL void nng_log_auth(
     nng_log_level level, const char *msgid, const char *msg, ...);
 
+=======
+>>>>>>> 410a83c4 (fix for NNG 1.7.2)
 #ifdef __cplusplus
 }
 #endif

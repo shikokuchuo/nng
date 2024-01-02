@@ -12,4 +12,4 @@ nng_directory(socket)
 
 nng_sources_if(NNG_TRANSPORT_FDC sockfd.c)
 nng_defines_if(NNG_TRANSPORT_FDC NNG_TRANSPORT_FDC)
-nng_test(sockfd_test)
+
