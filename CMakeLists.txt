@@ -95,8 +95,6 @@ target_compile_definitions(nng_testing PUBLIC NNG_STATIC_LIB NNG_TEST_LIB NNG_PR
 add_library(nng_private INTERFACE)
 target_compile_definitions(nng_private INTERFACE NNG_PRIVATE)
 
-target_compile_definitions(nng PRIVATE NNG_ELIDE_DEPRECATED)
-
 # We can use rlimit to configure the stack size for systems
 # that have too small defaults.  This is not used for Windows,
 # which can grow thread stacks sensibly.  (Note that NNG can get

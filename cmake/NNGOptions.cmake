@@ -37,7 +37,7 @@ option(NNG_ENABLE_COVERAGE "Enable coverage reporting." OFF)
 # availability for existing compiled applications.
 # Note: Currently this breaks the test suite, so we only do it
 # for the public library.
-option(NNG_ELIDE_DEPRECATED "Elide deprecated functionality." ON)
+option(NNG_ELIDE_DEPRECATED "Elide deprecated functionality." OFF)
 
 option(NNG_ENABLE_STATS "Enable statistics." ON)
 mark_as_advanced(NNG_ENABLE_STATS)

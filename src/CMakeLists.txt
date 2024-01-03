@@ -8,7 +8,7 @@
 # found online at https://opensource.org/licenses/MIT.
 #
 
-nng_sources(nng.c)
+nng_sources(nng.c nng_legacy.c)
 nng_headers(nng/nng.h)
 
 target_include_directories(nng PRIVATE ${PROJECT_SOURCE_DIR}/src)
@@ -16,6 +16,7 @@ target_include_directories(nng_testing PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 add_subdirectory(core)
 add_subdirectory(platform)
+add_subdirectory(compat)
 add_subdirectory(sp)
 add_subdirectory(supplemental)
 
