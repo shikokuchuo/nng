@@ -132,7 +132,7 @@ CMAKE_DEPENDENT_OPTION(NNG_TRANSPORT_WSS "Enable WSS transport." ON
         "NNG_ENABLE_TLS" OFF)
 mark_as_advanced(NNG_TRANSPORT_WSS)
 
-option (NNG_TRANSPORT_FDC "Enable File Descriptor transport (EXPERIMENTAL)" OFF)
+option (NNG_TRANSPORT_FDC "Enable File Descriptor transport (EXPERIMENTAL)" ON)
 mark_as_advanced(NNG_TRANSPORT_FDC)
 
 # ZeroTier
