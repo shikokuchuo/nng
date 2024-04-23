@@ -17,20 +17,21 @@
 nni_time
 nni_clock(void)
 {
-	// We are limited by the system clock, but that is ok.
 	return (GetTickCount64());
 }
 
 int
 nni_time_get(uint64_t *seconds, uint32_t *nanoseconds)
 {
-	int             rv;
+#if defined(NNG_HAVE_TIMESPEC_GET)
+  int             rv;
 	struct timespec ts;
-	if (timespec_get(&ts, TIME_UTC) == TIME_UTC) {
+	if ((rv = timespec_get(&ts, TIME_UTC)) == TIME_UTC) {
 		*seconds     = ts.tv_sec;
 		*nanoseconds = ts.tv_nsec;
 		return (0);
 	}
+#endif
 	return (nni_win_error(GetLastError()));
 }
 
@@ -40,12 +41,6 @@ nni_msleep(nni_duration dur)
 	uint64_t exp;
 
 	exp = (uint64_t) GetTickCount64() + dur;
-
-	// Sleep() would be our preferred API, if it didn't have a nasty
-	// feature where it rounds *down*.  We always want to sleep *at
-	// least* the requested amount of time, and never ever less.
-	// If we wind up sleeping less, then we will sleep(1) in the hope
-	// of waiting until the next clock tick.
 
 	Sleep((DWORD) dur);
 	while ((uint64_t) GetTickCount64() < exp) {
