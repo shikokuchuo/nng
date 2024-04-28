@@ -155,8 +155,8 @@ url_canonify_uri(char **outp, const char *in)
 				out[dst++] = (char) c;
 			} else {
 				out[dst++] = '%';
-				out[dst++] = toupper((uint8_t) out[src + 1]);
-				out[dst++] = toupper((uint8_t) out[src + 2]);
+				out[dst++] = (char) toupper((uint8_t) out[src + 1]);
+				out[dst++] = (char) toupper((uint8_t) out[src + 2]);
 			}
 			src += 3;
 			continue;

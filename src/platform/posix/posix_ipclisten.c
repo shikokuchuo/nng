@@ -249,7 +249,7 @@ ipc_listener_set_perms(void *arg, const void *buf, size_t sz, nni_type t)
 		nni_mtx_unlock(&l->mtx);
 		return (NNG_EBUSY);
 	}
-	l->perms = mode;
+	l->perms = (mode_t) mode;
 	nni_mtx_unlock(&l->mtx);
 	return (0);
 }
@@ -310,7 +310,7 @@ ipc_listener_listen(void *arg)
 	nni_posix_pfd *         pfd;
 	char *                  path;
 
-	if ((len = nni_posix_nn2sockaddr(&ss, &l->sa)) < sizeof(sa_family_t)) {
+	if ((len = (socklen_t) nni_posix_nn2sockaddr(&ss, &l->sa)) < sizeof(sa_family_t)) {
 		return (NNG_EADDRINVAL);
 	}
 
@@ -385,9 +385,9 @@ ipc_listener_listen(void *arg)
 		    (len > sizeof(sa_family_t)) &&
 		    (len <= sizeof(l->sa.s_abstract.sa_name)) &&
 		    (su->sun_path[0] == '\0')) {
-			len -= sizeof(sa_family_t);
+			len -= (socklen_t) sizeof(sa_family_t);
 			len--; // don't count the leading NUL.
-			l->sa.s_abstract.sa_len = len;
+			l->sa.s_abstract.sa_len = (uint16_t) len;
 			memcpy(
 			    l->sa.s_abstract.sa_name, &su->sun_path[1], len);
 		}
@@ -491,7 +491,7 @@ nni_ipc_listener_alloc(nng_stream_listener **lp, const nng_url *url)
 		}
 
 		l->sa.s_abstract.sa_family = NNG_AF_ABSTRACT;
-		l->sa.s_abstract.sa_len    = len;
+		l->sa.s_abstract.sa_len    = (uint16_t) len;
 #endif
 
 	} else {

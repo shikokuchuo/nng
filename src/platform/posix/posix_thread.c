@@ -448,7 +448,7 @@ nni_plat_ncpu(void)
 	// _SC_NPROCESSORS_ONLN.  Nonetheless, everybody implements it.
 	// If you don't we'll assume you only have a single logical CPU.
 #ifdef _SC_NPROCESSORS_ONLN
-	return (sysconf(_SC_NPROCESSORS_ONLN));
+	return ((int) sysconf(_SC_NPROCESSORS_ONLN));
 #else
 	return (1);
 #endif

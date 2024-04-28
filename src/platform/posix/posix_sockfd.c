@@ -66,7 +66,7 @@ sfd_dowrite(nni_sfd_conn *c)
 			}
 		}
 
-		if ((n = writev(fd, iovec, niov)) < 0) {
+		if ((n = (int) writev(fd, iovec, niov)) < 0) {
 			switch (errno) {
 			case EINTR:
 				continue;
@@ -129,7 +129,7 @@ sfd_doread(nni_sfd_conn *c)
 			}
 		}
 
-		if ((n = readv(fd, iovec, niov)) < 0) {
+		if ((n = (int) readv(fd, iovec, niov)) < 0) {
 			switch (errno) {
 			case EINTR:
 				continue;

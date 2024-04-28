@@ -80,7 +80,7 @@ nni_posix_udp_dorecv(nni_plat_udp *udp)
 		hdr.msg_name    = &ss;
 		hdr.msg_namelen = sizeof(ss);
 
-		if ((cnt = recvmsg(udp->udp_fd, &hdr, 0)) < 0) {
+		if ((cnt = (int) recvmsg(udp->udp_fd, &hdr, 0)) < 0) {
 			if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
 				// No data available at socket.  Leave
 				// the AIO at the head of the queue.
@@ -113,7 +113,7 @@ nni_posix_udp_dosend(nni_plat_udp *udp)
 		int rv  = 0;
 		int cnt = 0;
 
-		len = nni_posix_nn2sockaddr(&ss, nni_aio_get_input(aio, 0));
+		len = (int) nni_posix_nn2sockaddr(&ss, nni_aio_get_input(aio, 0));
 		if (len < 1) {
 			rv = NNG_EADDRINVAL;
 		} else {
@@ -136,7 +136,7 @@ nni_posix_udp_dosend(nni_plat_udp *udp)
 				hdr.msg_name    = &ss;
 				hdr.msg_namelen = len;
 
-				cnt = sendmsg(udp->udp_fd, &hdr, MSG_NOSIGNAL);
+				cnt = (int) sendmsg(udp->udp_fd, &hdr, MSG_NOSIGNAL);
 				if (cnt < 0) {
 					if ((errno == EAGAIN) ||
 					    (errno == EWOULDBLOCK)) {
@@ -197,7 +197,7 @@ nni_plat_udp_open(nni_plat_udp **upp, nni_sockaddr *bindaddr)
 	struct sockaddr_storage sa;
 	int                     rv;
 
-	if ((salen = nni_posix_nn2sockaddr(&sa, bindaddr)) < 1) {
+	if ((salen = (int) nni_posix_nn2sockaddr(&sa, bindaddr)) < 1) {
 		return (NNG_EADDRINVAL);
 	}
 

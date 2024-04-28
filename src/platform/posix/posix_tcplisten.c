@@ -205,7 +205,7 @@ nni_tcp_listener_listen(nni_tcp_listener *l, const nni_sockaddr *sa)
 	int                     fd;
 	nni_posix_pfd *         pfd;
 
-	if (((len = nni_posix_nn2sockaddr(&ss, sa)) == 0) ||
+	if (((len = (socklen_t) nni_posix_nn2sockaddr(&ss, sa)) == 0) ||
 	    ((ss.ss_family != AF_INET) && (ss.ss_family != AF_INET6))) {
 		return (NNG_EADDRINVAL);
 	}

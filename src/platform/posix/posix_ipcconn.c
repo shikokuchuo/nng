@@ -67,7 +67,7 @@ ipc_dowrite(ipc_conn *c)
 		hdr.msg_iovlen = niov;
 		hdr.msg_iov    = iovec;
 
-		if ((n = sendmsg(fd, &hdr, MSG_NOSIGNAL)) < 0) {
+		if ((n = (int) sendmsg(fd, &hdr, MSG_NOSIGNAL)) < 0) {
 			switch (errno) {
 			case EINTR:
 				continue;
@@ -129,7 +129,7 @@ ipc_doread(ipc_conn *c)
 			}
 		}
 
-		if ((n = readv(fd, iovec, niov)) < 0) {
+		if ((n = (int) readv(fd, iovec, niov)) < 0) {
 			switch (errno) {
 			case EINTR:
 				continue;

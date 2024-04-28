@@ -93,8 +93,8 @@ typedef void (*nni_cb)(void *);
 	} while (0)
 
 #define NNI_GET16(ptr, v)                               \
-	v = (((uint16_t) ((uint8_t) (ptr)[0])) << 8u) + \
-	    (((uint16_t) (uint8_t) (ptr)[1]))
+	v = (uint16_t) ((((uint16_t) ((uint8_t) (ptr)[0])) << 8u) + \
+	    (((uint16_t) (uint8_t) (ptr)[1])))
 
 #define NNI_GET32(ptr, v)                                \
 	v = (((uint32_t) ((uint8_t) (ptr)[0])) << 24u) + \

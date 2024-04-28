@@ -204,7 +204,7 @@ ipc_dialer_dial(void *arg, nni_aio *aio)
 	if ((rv = nni_aio_schedule(aio, ipc_dialer_cancel, d)) != 0) {
 		goto error;
 	}
-	if (connect(fd, (void *) &ss, len) != 0) {
+	if (connect(fd, (void *) &ss, (socklen_t) len) != 0) {
 		if (errno != EINPROGRESS) {
 			if (errno == ENOENT) {
 				// No socket present means nobody listening.
@@ -294,7 +294,7 @@ nni_ipc_dialer_alloc(nng_stream_dialer **dp, const nng_url *url)
 		}
 
 		d->sa.s_abstract.sa_family = NNG_AF_ABSTRACT;
-		d->sa.s_abstract.sa_len    = len;
+		d->sa.s_abstract.sa_len    = (uint16_t) len;
 #endif
 
 	} else {

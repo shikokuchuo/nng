@@ -491,7 +491,7 @@ ws_frame_prep_tx(nni_ws *ws, ws_frame *frame)
 	}
 
 	// Populate the frame header.
-	frame->head[0] = frame->op;
+	frame->head[0] = (uint8_t) frame->op;
 	frame->hlen    = 2;
 	if (frame->final) {
 		frame->head[0] |= 0x80; // final frame bit

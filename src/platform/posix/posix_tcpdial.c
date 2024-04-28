@@ -221,7 +221,7 @@ nni_tcp_dial(nni_tcp_dialer *d, const nni_sockaddr *sa, nni_aio *aio)
 		goto error;
 	}
 	if (d->srclen != 0) {
-		if (bind(fd, (void *) &d->src, d->srclen) != 0) {
+		if (bind(fd, (void *) &d->src, (socklen_t) d->srclen) != 0) {
 			rv = nni_plat_errno(errno);
 			goto error;
 		}
@@ -229,7 +229,7 @@ nni_tcp_dial(nni_tcp_dialer *d, const nni_sockaddr *sa, nni_aio *aio)
 	if ((rv = nni_aio_schedule(aio, tcp_dialer_cancel, d)) != 0) {
 		goto error;
 	}
-	if (connect(fd, (void *) &ss, sslen) != 0) {
+	if (connect(fd, (void *) &ss, (socklen_t) sslen) != 0) {
 		if (errno != EINPROGRESS) {
 			rv = nni_plat_errno(errno);
 			goto error;
