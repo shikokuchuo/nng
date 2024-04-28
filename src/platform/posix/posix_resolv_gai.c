@@ -347,6 +347,7 @@ parse_ip(const char *addr, nng_sockaddr *sa, bool want_port)
 	char            *port;
 	char            *host;
 	char            *buf;
+	char            *s;
 	size_t           buf_len;
 
 	if (addr == NULL) {
@@ -364,7 +365,6 @@ parse_ip(const char *addr, nng_sockaddr *sa, bool want_port)
 		wrapped = true;
 		host++;
 	} else {
-		char *s;
 		for (s = host; *s != '\0'; s++) {
 			if (*s == '.') {
 				break;

@@ -45,7 +45,7 @@ extern "C" {
 
 #define NNG_MAJOR_VERSION 1
 #define NNG_MINOR_VERSION 7
-#define NNG_PATCH_VERSION 2
+#define NNG_PATCH_VERSION 3
 #define NNG_RELEASE_SUFFIX \
 	"" // if non-empty (i.e. "pre"), this is a pre-release
 
@@ -745,7 +745,7 @@ NNG_DECL int nng_stream_listener_set_ptr(
     nng_stream_listener *, const char *, void *);
 NNG_DECL int nng_stream_listener_set_addr(
     nng_stream_listener *, const char *, const nng_sockaddr *);
-    
+
 typedef int   nng_init_parameter;
 NNG_DECL void nng_init_set_parameter(nng_init_parameter, uint64_t);
 
