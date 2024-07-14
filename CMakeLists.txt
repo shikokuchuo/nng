@@ -75,18 +75,10 @@ set(CMAKE_INSTALL_MESSAGE NEVER)
 # gets named based on where it is in the tree.
 set(NNG_TEST_PREFIX nng)
 
-# Enable access to private APIs for our own use.
 add_definitions(-DNNG_PRIVATE)
 
 set(NNG_STATIC_LIB ON)
 
-# These are library targets.  The "nng" library is the main public library.
-# The "nng_testing" is a full build of the library for test cases
-# only, which is done statically and includes even portions of the code
-# that are not part of the public library (things that may have been elided.)
-# The "nng_private" library is an interface that allows some internal tools
-# to obtain details about how the public library was built, so that we can
-# include or not include code based on what's actually present.
 add_library(nng)
 
 add_library(nng_testing STATIC EXCLUDE_FROM_ALL)
@@ -95,12 +87,6 @@ target_compile_definitions(nng_testing PUBLIC NNG_STATIC_LIB NNG_TEST_LIB NNG_PR
 add_library(nng_private INTERFACE)
 target_compile_definitions(nng_private INTERFACE NNG_PRIVATE)
 
-# We can use rlimit to configure the stack size for systems
-# that have too small defaults.  This is not used for Windows,
-# which can grow thread stacks sensibly.  (Note that NNG can get
-# by with a smallish stack, but application callbacks might require
-# larger values if using aio completion callbacks.  TLS libraries may
-# require larger stacks however.)
 if (NOT WIN32)
     option(NNG_SETSTACKSIZE "Use rlimit for thread stack size" OFF)
     if (NNG_SETSTACKSIZE)
@@ -129,8 +115,6 @@ if (NNG_MAX_TASKQ_THREADS)
     add_definitions(-DNNG_MAX_TASKQ_THREADS=${NNG_MAX_TASKQ_THREADS})
 endif ()
 
-# Expire threads. This runs the timeout handling, and having more of them
-# reduces contention on the common locks used for aio expiration.
 set(NNG_NUM_EXPIRE_THREADS 0 CACHE STRING "Fixed number of expire threads, 0 for automatic")
 mark_as_advanced(NNG_NUM_EXPIRE_THREADS)
 if (NNG_NUM_EXPIRE_THREADS)
@@ -143,8 +127,6 @@ if (NNG_MAX_EXPIRE_THREADS)
     add_definitions(-DNNG_MAX_EXPIRE_THREADS=${NNG_MAX_EXPIRE_THREADS})
 endif()
 
-# Poller threads.  These threads run the pollers.  This is mostly used
-# on Windows right now, as the POSIX platforms use a single threaded poller.
 set(NNG_NUM_POLLER_THREADS 0 CACHE STRING "Fixed number of I/O poller threads, 0 for automatic")
 if (NNG_NUM_POLLER_THREADS)
     add_definitions(-DNNG_NUM_POLLER_THREADS=${NNG_NUM_POLLER_THREADS})
@@ -168,8 +150,6 @@ endif ()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NNG_WARN_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NNG_WARN_FLAGS}")
 
-# If the compiler is not on Windows, does it support hiding the
-# symbols by default?  For shared libraries we would like to do this.
 if (NOT WIN32 AND NOT CYGWIN)
     check_c_compiler_flag(-fvisibility=hidden NNG_HIDDEN_VISIBILITY)
     if (NNG_HIDDEN_VISIBILITY)
@@ -182,8 +162,6 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     add_definitions(-DNNG_PLATFORM_LINUX)
     add_definitions(-DNNG_USE_EVENTFD)
     add_definitions(-DNNG_HAVE_ABSTRACT_SOCKETS)
-    # Windows subsystem for Linux -- smells like Linux, but it has
-    # some differences (SO_REUSEADDR for one).
     if (CMAKE_SYSTEM_VERSION MATCHES "Microsoft")
         add_definitions(-DNNG_PLATFORM_WSL)
     endif ()
@@ -241,7 +219,6 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "QNX")
 else ()
     message(AUTHOR_WARNING "WARNING: This platform may not be supported: ${CMAKE_SYSTEM_NAME}")
     message(AUTHOR_WARNING "${ISSUE_REPORT_MSG}")
-    # blithely hope for POSIX to work
     add_definitions(-DNNG_PLATFORM_POSIX)
     set(NNG_PLATFORM_POSIX ON)
 endif ()
