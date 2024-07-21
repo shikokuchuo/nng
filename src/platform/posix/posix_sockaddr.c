@@ -150,7 +150,7 @@ nni_posix_sockaddr2nn(nni_sockaddr *na, const void *sa, size_t sz)
 		} else if (spath->sun_path[0] == 0) {
 			nsabs            = &na->s_abstract;
 			nsabs->sa_family = NNG_AF_ABSTRACT;
-			nsabs->sa_len    = (uint16_t) sz - 1;
+			nsabs->sa_len    = (uint16_t) (sz - 1);
 			memcpy(nsabs->sa_name, &spath->sun_path[1], sz - 1);
 		} else {
 		  nspath            = &na->s_ipc;
