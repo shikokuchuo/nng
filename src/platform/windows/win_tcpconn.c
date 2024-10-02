@@ -259,8 +259,8 @@ tcp_close(void *arg)
 		c->closed = true;
 		c->s      = INVALID_SOCKET;
 		if (s != INVALID_SOCKET) {
-		  CancelIoEx(s, &c->send_io.olpd);
-		  CancelIoEx(s, &c->recv_io.olpd);
+		  CancelIoEx((HANDLE) s, &c->send_io.olpd);
+		  CancelIoEx((HANDLE) s, &c->recv_io.olpd);
 		  shutdown(s, SD_BOTH);
 		  closesocket(s);
 		}
