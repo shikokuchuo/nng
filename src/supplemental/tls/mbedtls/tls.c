@@ -17,6 +17,9 @@
 #include "mbedtls/version.h" // Must be first in order to pick up version
 
 #include "mbedtls/error.h"
+#ifdef MBEDTLS_PSA_CRYPTO_C
+#include "psa/crypto.h"
+#endif
 
 // mbedTLS renamed this header for 2.4.0.
 #if MBEDTLS_VERSION_MAJOR > 2 || MBEDTLS_VERSION_MINOR >= 4
@@ -403,7 +406,11 @@ config_init(nng_tls_engine_config *cfg, enum nng_tls_mode mode)
 	// SSL v3.3. As of this writing, Mbed TLS still does not support
 	// version 1.3, and we would want to test it before enabling it here.
 	cfg->min_ver = MBEDTLS_SSL_MINOR_VERSION_3;
+#ifdef MBEDTLS_SSL_PROTO_TLS1_3
+	cfg->max_ver = MBEDTLS_SSL_MINOR_VERSION_4;
+#else
 	cfg->max_ver = MBEDTLS_SSL_MINOR_VERSION_3;
+#endif
 
 	mbedtls_ssl_conf_min_version(
 	    &cfg->cfg_ctx, MBEDTLS_SSL_MAJOR_VERSION_3, cfg->min_ver);
@@ -549,9 +556,16 @@ config_version(nng_tls_engine_config *cfg, nng_tls_version min_ver,
 		v1 = MBEDTLS_SSL_MINOR_VERSION_2;
 		break;
 #endif
+#ifdef MBEDTLS_SSL_MINOR_VERSION_3
 	case NNG_TLS_1_2:
 		v1 = MBEDTLS_SSL_MINOR_VERSION_3;
 		break;
+#endif
+#ifdef MBEDTLS_SSL_PROTO_TLS1_3
+	case NNG_TLS_1_3:
+	  v1 = MBEDTLS_SSL_MINOR_VERSION_4;
+	  break;
+#endif
 	default:
 		return (NNG_ENOTSUP);
 	}
@@ -567,9 +581,17 @@ config_version(nng_tls_engine_config *cfg, nng_tls_version min_ver,
 		v2 = MBEDTLS_SSL_MINOR_VERSION_2;
 		break;
 #endif
+#ifdef MBEDTLS_SSL_MINOR_VERSION_3
 	case NNG_TLS_1_2:
+	  v2 = MBEDTLS_SSL_MINOR_VERSION_3;
+	  break;
+#endif
 	case NNG_TLS_1_3: // We lack support for 1.3, so treat as 1.2.
+#ifdef MBEDTLS_SSL_PROTO_TLS1_3
+	  v2 = MBEDTLS_SSL_MINOR_VERSION_4;
+#else
 		v2 = MBEDTLS_SSL_MINOR_VERSION_3;
+#endif
 		break;
 	default:
 		// Note that this means that if we ever TLS 1.4 or 2.0,
@@ -633,9 +655,15 @@ nng_tls_engine_init_mbed(void)
 		return (rv);
 	}
 #endif
+#ifdef MBEDTLS_PSA_CRYPTO_C
+	rv = psa_crypto_init();
+	if (rv != 0) {
+	  return (rv);
+	}
+#endif
 	// Uncomment the following to have noisy debug from mbedTLS.
 	// This may be useful when trying to debug failures.
-	// mbedtls_debug_set_threshold(3);
+	//	mbedtls_debug_set_threshold(9);
 
 	rv = nng_tls_engine_register(&tls_engine_mbed);
 
@@ -654,5 +682,8 @@ nng_tls_engine_fini_mbed(void)
 #ifdef NNG_TLS_USE_CTR_DRBG
 	mbedtls_ctr_drbg_free(&rng_ctx);
 	nni_mtx_fini(&rng_lock);
+#endif
+#ifdef MBEDTLS_PSA_CRYPTO_C
+	mbedtls_psa_crypto_free();
 #endif
 }
