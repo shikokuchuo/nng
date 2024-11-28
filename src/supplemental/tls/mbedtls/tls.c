@@ -412,10 +412,15 @@ config_init(nng_tls_engine_config *cfg, enum nng_tls_mode mode)
 	cfg->max_ver = MBEDTLS_SSL_MINOR_VERSION_3;
 #endif
 
+#if MBEDTLS_VERSION_MAJOR >= 3 && MBEDTLS_VERSION_MINOR >= 2 || MBEDTLS_VERSION_MAJOR > 3
+	mbedtls_ssl_conf_min_tls_version(&cfg->cfg_ctx, MBEDTLS_SSL_VERSION_TLS1_2);
+	mbedtls_ssl_conf_max_tls_version(&cfg->cfg_ctx, cfg->max_ver == MBEDTLS_SSL_MINOR_VERSION_4 ? MBEDTLS_SSL_VERSION_TLS1_3 : MBEDTLS_SSL_VERSION_TLS1_2);
+#else
 	mbedtls_ssl_conf_min_version(
 	    &cfg->cfg_ctx, MBEDTLS_SSL_MAJOR_VERSION_3, cfg->min_ver);
 	mbedtls_ssl_conf_max_version(
 	    &cfg->cfg_ctx, MBEDTLS_SSL_MAJOR_VERSION_3, cfg->max_ver);
+#endif
 
 	mbedtls_ssl_conf_rng(&cfg->cfg_ctx, tls_random, cfg);
 	mbedtls_ssl_conf_dbg(&cfg->cfg_ctx, tls_dbg, cfg);
@@ -540,7 +545,6 @@ config_version(nng_tls_engine_config *cfg, nng_tls_version min_ver,
     nng_tls_version max_ver)
 {
 	int v1, v2;
-	int maj = MBEDTLS_SSL_MAJOR_VERSION_3;
 
 	if (min_ver > max_ver) {
 		return (NNG_ENOTSUP);
@@ -602,8 +606,13 @@ config_version(nng_tls_engine_config *cfg, nng_tls_version min_ver,
 
 	cfg->min_ver = v1;
 	cfg->max_ver = v2;
-	mbedtls_ssl_conf_min_version(&cfg->cfg_ctx, maj, cfg->min_ver);
-	mbedtls_ssl_conf_max_version(&cfg->cfg_ctx, maj, cfg->max_ver);
+#if MBEDTLS_VERSION_MAJOR >= 3 && MBEDTLS_VERSION_MINOR >= 2 || MBEDTLS_VERSION_MAJOR > 3
+	mbedtls_ssl_conf_min_tls_version(&cfg->cfg_ctx, cfg->min_ver == MBEDTLS_SSL_MINOR_VERSION_4 ? MBEDTLS_SSL_VERSION_TLS1_3 : MBEDTLS_SSL_VERSION_TLS1_2);
+	mbedtls_ssl_conf_max_tls_version(&cfg->cfg_ctx, cfg->max_ver == MBEDTLS_SSL_MINOR_VERSION_4 ? MBEDTLS_SSL_VERSION_TLS1_3 : MBEDTLS_SSL_VERSION_TLS1_2);
+#else
+	mbedtls_ssl_conf_min_version(&cfg->cfg_ctx, MBEDTLS_SSL_MAJOR_VERSION_3, cfg->min_ver);
+	mbedtls_ssl_conf_max_version(&cfg->cfg_ctx, MBEDTLS_SSL_MAJOR_VERSION_3, cfg->max_ver);
+#endif
 	return (0);
 }
 
