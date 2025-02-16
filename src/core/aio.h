@@ -28,6 +28,7 @@ extern void nni_aio_reap(nni_aio *);
 extern int nni_aio_alloc(nni_aio **, nni_cb, void *arg);
 
 extern void nni_aio_free(nni_aio *aio);
+extern void nni_aio_free_cb(void *aio);
 
 extern void nni_aio_stop(nni_aio *);
 
