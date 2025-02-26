@@ -352,7 +352,9 @@ req0_recv_cb(void *arg)
 	nni_id_remove(&s->requests, id);
 	ctx->request_id = 0;
 	if (ctx->req_msg != NULL) {
-		nni_msg_free(ctx->req_msg);
+	  if (ctx->retry > 0) {
+	    nni_msg_free(ctx->req_msg);
+	  }
 		ctx->req_msg = NULL;
 	}
 
@@ -526,7 +528,9 @@ req0_run_send_queue(req0_sock *s, nni_aio_completions *sent_list)
 		// At this point, we will never give this message back to
 		// the user, so we don't have to worry about making it
 		// unique.  We can freely clone it.
-		nni_msg_clone(ctx->req_msg);
+		if (ctx->retry > 0) {
+		  nni_msg_clone(ctx->req_msg);
+		}
 		nni_aio_set_msg(&p->aio_send, ctx->req_msg);
 		nni_pipe_send(p->pipe, &p->aio_send);
 	}
@@ -546,7 +550,9 @@ req0_ctx_reset(req0_ctx *ctx)
 		ctx->request_id = 0;
 	}
 	if (ctx->req_msg != NULL) {
-		nni_msg_free(ctx->req_msg);
+	  if (ctx->retry > 0) {
+	    nni_msg_free(ctx->req_msg);
+	  }
 		ctx->req_msg = NULL;
 	}
 	if (ctx->rep_msg != NULL) {
