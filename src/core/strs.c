@@ -159,6 +159,9 @@ nni_asprintf(char **sp, const char *fmt, ...)
 	size_t  len;
 	char *  s;
 
+	if (fmt == NULL) {
+		return (NNG_EINTERNAL);
+	}
 	va_start(ap, fmt);
 	len = vsnprintf(NULL, 0, fmt, ap);
 	va_end(ap);
