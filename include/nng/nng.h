@@ -44,10 +44,10 @@ extern "C" {
 #endif
 
 #define NNG_MAJOR_VERSION 1
-#define NNG_MINOR_VERSION 10
-#define NNG_PATCH_VERSION 2
+#define NNG_MINOR_VERSION 11
+#define NNG_PATCH_VERSION 0
 // if non-empty (i.e. "pre"), this is a pre-release
-#define NNG_RELEASE_SUFFIX "pre"
+#define NNG_RELEASE_SUFFIX ""
 
 #define NNG_MAXADDRLEN (128)
 
