@@ -37,6 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc.js"></script>
@@ -93,10 +94,13 @@
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
+                sidebar_toggle.checked = false;
             }
-            sidebar_toggle.checked = sidebar === 'visible';
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
@@ -147,7 +151,12 @@
 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -250,9 +259,9 @@ It is also reliable, in that a requester will keep retrying until
 a reply is received.</p>
 </div>
 <p>The <em>REP</em> protocol is the replier side, and the
-<a href="./req.html"><em>REP</em></a> protocol is the requester side.</p>
+<a href="../proto/req.html"><em>REP</em></a> protocol is the requester side.</p>
 <h2 id="socket-operations"><a class="header" href="#socket-operations">Socket Operations</a></h2>
-<p>The <a href="TODO.html"><code>nng_rep0_open</code></a> functions create a replier socket.
+<p>The <a href="../api/sock.html#opening-a-socket"><code>nng_rep0_open</code></a> functions create a replier socket.
 This socket may be used to receive messages (requests), and then to send
 replies.</p>
 <p>Generally a reply can only be sent after receiving a request.</p>
@@ -260,10 +269,10 @@ replies.</p>
 was previously received.</p>
 <p>Likewise, only one receive operation may be pending at a time.
 Any additional concurrent receive operations will result in <code>NNG_ESTATE</code>.</p>
-<p><a href="TODO.html">Raw mode</a> sockets ignore all these restrictions.</p>
+<p><a href="../api/sock.html#raw-mode-sockets">Raw mode</a> sockets ignore all these restrictions.</p>
 <h2 id="context-operations"><a class="header" href="#context-operations">Context Operations</a></h2>
-<p>This protocol supports the creation of <a href="TODO.html">contexts</a> for concurrent
-use cases using <a href="TODO.html"><code>nng_ctx_open</code></a>.</p>
+<p>This protocol supports the creation of <a href="../TODO.html">contexts</a> for concurrent
+use cases using <a href="../api/ctx.html#creating-a-context"><code>nng_ctx_open</code></a>.</p>
 <p>Each context may have at most one outstanding request, and operates
 independently of the others.
 The restrictions for order of operations with sockets apply equally
@@ -276,7 +285,19 @@ a separate socket.</p>
 <p>The <em>REP</em> protocol has no protocol-specific options.</p>
 <h2 id="protocol-headers"><a class="header" href="#protocol-headers">Protocol Headers</a></h2>
 <p>The <em>REP</em> protocol uses a <a name="a004"></a><em>backtrace</em> in the header.
-This is more fully documented in the <a href="./req.html"><em>REQ</em></a> chapter.</p>
+This is more fully documented in the <a href="../proto/req.html"><em>REQ</em></a> chapter.</p>
+<!-- NOTE: This assumes that any page referencing this is located
+     in a directory two levels down.  Meaning ./api/somefile.md or
+     similar.  mdbook cannot accommodate links that are called from
+     different levels in the hierarchy. -->
+<!-- Symbol cross reference -->
+<!-- HTTP -->
+<!-- HTTP Status -->
+<!-- TLS -->
+<!-- Macros -->
+<!-- Protocols -->
+<!-- Transports -->
+<!-- Concept index -->
 
                     </main>
 
@@ -325,6 +346,7 @@ This is more fully documented in the <a href="./req.html"><em>REQ</em></a> chapt
 
         <!-- Custom JS scripts -->
         <script src="../theme/pagetoc.js"></script>
+
 
 
     </div>
