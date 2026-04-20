@@ -14,6 +14,7 @@
 #include "reap.h"
 #include "taskq.h"
 
+#include <limits.h>
 #include <string.h>
 
 struct nni_aio_expire_q {
@@ -739,6 +740,13 @@ nni_aio_iov_count(nni_aio *aio)
 		residual += aio->a_iov[i].iov_len;
 	}
 	return (residual);
+}
+
+size_t
+nni_aio_iov_clamp_len(size_t len, size_t count)
+{
+	size_t headroom = (size_t) INT_MAX - count;
+	return (len < headroom ? len : headroom);
 }
 
 size_t
