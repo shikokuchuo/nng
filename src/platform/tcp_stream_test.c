@@ -472,6 +472,9 @@ test_tcp_stream_iov_exceeds_int_max(void)
 	}
 	NUTS_PASS(nng_aio_set_iov(saio, 8, iov));
 
+	// The peer never drains, so guard against any hang in the first
+	// sendmsg by bounding the wait.  Normal completion is sub-second.
+	nng_aio_set_timeout(saio, 10000);
 	nng_stream_send(c1, saio);
 	nng_aio_wait(saio);
 
