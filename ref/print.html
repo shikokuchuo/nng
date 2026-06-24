@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8131c6ff.js";
+            window.path_to_searchindex_js = "searchindex-7315db9f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-9d8f23fd.js"></script>
+        <script src="toc-f5500b13.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -341,18 +341,20 @@ include the <code>nng/nng.h</code> header file like so:</p>
 <li><a href="#initialization--finalization">Initialization</a></li>
 <li><a href="#messages">Messages</a></li>
 <li><a href="#sockets">Sockets</a></li>
+<li><a href="#devices">Devices</a></li>
 <li><a href="#contexts">Contexts</a></li>
 <li><a href="#pipes">Pipes</a></li>
 <li><a href="#memory">Memory</a></li>
 <li><a href="#time">Time</a></li>
 <li><a href="#urls">URLs</a></li>
+<li><a href="#socket-addresses">Socket Addresses</a></li>
 <li><a href="#synchronization-primitives">Synchronization</a></li>
 <li><a href="api/thr.html">Threads</a></li>
 <li><a href="#logging">Logging</a></li>
 <li><a href="#statistics">Statistics</a></li>
 <li><a href="#http-support">HTTP</a></li>
 <li><a href="#miscellaneous">Miscellaneous</a></li>
-<li><a href="#errors-1">Errors</a></li>
+<li><a href="#errors-2">Errors</a></li>
 <li><a href="#id-map">ID Map</a></li>
 <li><a href="api/cmd_opts.html">Command Options</a></li>
 </ul>
@@ -748,7 +750,7 @@ the protocol specific processing must be performed by the application.</p>
 <blockquote class="blockquote-tag blockquote-tag-tip">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
 <p>Most applications do not need to use raw sockets.
-The notable exception is when using <a href="TODO.html"><code>nng_device</code></a>, which requires raw sockets.
+The notable exception is when using <a href="#devices"><code>nng_device</code></a>, which requires raw sockets.
 To obtain asynchronous behavior, consider using <a href="#contexts">contexts</a> instead.</p>
 </blockquote>
 <p>The following functions open a socket in <a href="#raw-mode-sockets">raw</a> mode:</p>
@@ -921,7 +923,7 @@ for an underlying transport, the option should be set on the <a href="TODO.html"
 <tr><th>Option</th><th>Type</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>NNG_OPT_MAXTTL</code><a name="NNG_OPT_MAXTTL"></a></td><td><code>int</code></td><td>Maximum number of traversals across an <a href="TODO.html"><code>nng_device</code></a> device, to prevent forwarding loops. May be 1-255, inclusive. Normally defaults to 8.</td></tr>
+<tr><td><code>NNG_OPT_MAXTTL</code><a name="NNG_OPT_MAXTTL"></a></td><td><code>int</code></td><td>Maximum number of traversals across an <a href="#devices"><code>nng_device</code></a> device, to prevent forwarding loops. May be 1-255, inclusive. Normally defaults to 8.</td></tr>
 <tr><td><code>NNG_OPT_RECONNMAXT</code><a name="NNG_OPT_RECONNMAXT"></a></td><td><code>nng_duration</code></td><td>Maximum time <a href="TODO.html">dialers</a> will delay before trying after failing to connect.</td></tr>
 <tr><td><code>NNG_OPT_RECONNMINT</code><a name="NNG_OPT_RECONNMINT"></a></td><td><code>nng_duration</code></td><td>Minimum time <a href="TODO.html">dialers</a> will delay before trying after failing to connect.</td></tr>
 <tr><td><code>NNG_OPT_RECVBUF</code><a name="NNG_OPT_RECVBUF"></a></td><td><code>int</code></td><td>Maximum number of messages (0-8192) to buffer locally when receiving.</td></tr>
@@ -1074,6 +1076,93 @@ int main(int argc, char **argv) {
     }
 }
 </code></pre>
+<!-- NOTE: This assumes that any page referencing this is located
+     in a directory two levels down.  Meaning ./api/somefile.md or
+     similar.  mdbook cannot accommodate links that are called from
+     different levels in the hierarchy. -->
+<!-- Symbol cross reference -->
+<!-- HTTP -->
+<!-- HTTP Status -->
+<!-- TLS -->
+<!-- Macros -->
+<!-- Protocols -->
+<!-- Transports -->
+<!-- Concept index -->
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="devices"><a class="header" href="#devices">Devices</a></h1>
+<pre><code class="language-c">nng_err nng_device(nng_socket s1, nng_socket s2);
+void nng_device_aio(nng_aio *aio, nng_socket s1, nng_socket s2);
+</code></pre>
+<p><a name="a001"></a>
+<a name="a002"></a>
+<a name="a003"></a>
+The <a name="a004"></a><code>nng_device</code> and <a name="a005"></a><code>nng_device_aio</code> functions forward messages
+received from one <a href="#sockets">socket</a> to another socket.
+Devices are useful for creating forwarders, proxies, and other network
+topologies that improve scalability, reliability, or isolation.</p>
+<p>Only <a href="#raw-mode-sockets">raw</a> mode sockets may be used with devices.
+These sockets are created using the <code>_raw</code> forms of the protocol constructors,
+such as <a href="#raw-mode-sockets"><code>nng_req0_open_raw</code></a>.</p>
+<h2 id="socket-ownership"><a class="header" href="#socket-ownership">Socket Ownership</a></h2>
+<p>When either function starts the device successfully, ownership of the sockets
+transfers to the device.
+The application must not use those sockets again, including closing them with
+<a href="#closing-a-socket"><code>nng_socket_close</code></a>.
+Attempts to use sockets that are owned by a device fail with <a href="#NNG_EBUSY"><code>NNG_EBUSY</code></a>.</p>
+<p>The device closes the sockets when it stops.
+If the device fails to start, ownership remains with the caller, and the caller
+is still responsible for closing the sockets.</p>
+<h2 id="synchronous-devices"><a class="header" href="#synchronous-devices">Synchronous Devices</a></h2>
+<p>The <a name="a006"></a><code>nng_device</code> function starts the device and blocks until the device
+stops.
+This form is intended for simple applications where the device is the primary
+control flow.</p>
+<p>Applications that need to stop a device under program control should use
+<a href="#asynchronous-devices"><code>nng_device_aio</code></a> instead.</p>
+<h2 id="asynchronous-devices"><a class="header" href="#asynchronous-devices">Asynchronous Devices</a></h2>
+<p>The <a name="a007"></a><code>nng_device_aio</code> function starts the device in the background and
+returns immediately.
+To stop the device, cancel the <em>aio</em> with <a href="#cancellation"><code>nng_aio_cancel</code></a> and then wait for
+the operation to complete with <a href="#wait-for-completion"><code>nng_aio_wait</code></a>.
+The sockets are closed by the device during teardown.</p>
+<h2 id="reflectors"><a class="header" href="#reflectors">Reflectors</a></h2>
+<p>One socket may be initialized with <a href="#socket-structure"><code>NNG_SOCKET_INITIALIZER</code></a> instead of being
+opened.
+In this case the other socket must be valid, bidirectional, raw, and able to
+peer with itself, such as <a href="#pair-protocol">PAIR</a> or <a href="#bus-protocol">BUS</a>.
+The device acts as a reflector, returning messages received from the valid
+socket back to that socket.</p>
+<h2 id="forwarders"><a class="header" href="#forwarders">Forwarders</a></h2>
+<p>When both sockets are valid, they must be compatible peers.
+For example, <a href="#pub-protocol">PUB</a> may be paired with <a href="#sub-protocol">SUB</a>, and <a href="#bus-protocol">BUS</a> may be
+paired with <a href="#bus-protocol">BUS</a>.</p>
+<p>When a protocol has routing information in the message header, the device uses
+the raw protocol processing to preserve and update that information as needed.
+This lets replies and responses return through forwarders to the correct
+requesters or surveyors.</p>
+<p>Devices operate in best-effort delivery mode.
+If a received message cannot be accepted by the other socket because of
+backpressure or another error, the message is discarded.</p>
+<h2 id="return-values"><a class="header" href="#return-values">Return Values</a></h2>
+<p>The <a name="a008"></a><code>nng_device</code> function returns <code>NNG_OK</code> if the device stops without an
+error, or an error code if the device fails.
+The <a name="a009"></a><code>nng_device_aio</code> function reports its result through the supplied
+<em>aio</em>.</p>
+<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
+<dl>
+<dt id="nng_ebusy"><a class="header" href="#nng_ebusy"><a href="#NNG_EBUSY"><code>NNG_EBUSY</code></a></a></dt>
+<dd>At least one socket is already owned by a device.</dd>
+<dt id="nng_eclosed"><a class="header" href="#nng_eclosed"><a href="#NNG_ECLOSED"><code>NNG_ECLOSED</code></a></a></dt>
+<dd>At least one socket is not open.</dd>
+<dt id="nng_einval"><a class="header" href="#nng_einval"><a href="#NNG_EINVAL"><code>NNG_EINVAL</code></a></a></dt>
+<dd>The sockets are not compatible, are not raw, or are both invalid.</dd>
+<dt id="nng_enomem"><a class="header" href="#nng_enomem"><a href="#NNG_ENOMEM"><code>NNG_ENOMEM</code></a></a></dt>
+<dd>Insufficient memory is available.</dd>
+</dl>
+<h2 id="see-also"><a class="header" href="#see-also">See Also</a></h2>
+<p><a href="#asynchronous-operations">Asynchronous I/O</a>,
+<a href="#sockets">Sockets</a>,
+<a href="#protocols">Protocols</a></p>
 <!-- NOTE: This assumes that any page referencing this is located
      in a directory two levels down.  Meaning ./api/somefile.md or
      similar.  mdbook cannot accommodate links that are called from
@@ -1378,7 +1467,7 @@ and might not be further usable as a result. (Other functions will result in <a 
 <pre><code class="language-c">nng_err nng_pipe_peer_addr(nng_pipe p, nng_sockaddr *sap);
 nng_err nng_pipe_self_addr(nng_pipe p, nng_sockaddr *sap);
 </code></pre>
-<p>The <a href="TODO.html"><code>nng_sockaddr</code></a> for the local (self) or remote (peer) of the pipe is available using these
+<p>The <a href="#socket-addresses"><code>nng_sockaddr</code></a> for the local (self) or remote (peer) of the pipe is available using these
 functions. The associated address will be stored in the location pointed to by <em>sap</em>.</p>
 <h2 id="pipe-options"><a class="header" href="#pipe-options">Pipe Options</a></h2>
 <pre><code class="language-c">nng_err nng_pipe_get_bool(nng_pipe p, const char *opt, bool *valp);
@@ -1410,7 +1499,7 @@ The value of <em>len</em> must be large enough to hold the string and the termin
 <p>The <code>nng_pipe_get_strlen</code> function is used to obtain the length of the string. This can be useful
 to find the size of the buffer needed by the <code>nng_pipe_get_strcpy</code> function for a property.
 Note that like <code>strlen</code>, this size does not account for the zero byte to terminate the string.</p>
-<h3 id="errors"><a class="header" href="#errors">Errors</a></h3>
+<h3 id="errors-1"><a class="header" href="#errors-1">Errors</a></h3>
 <p>The pipe option functions can return the following errors:</p>
 <ul>
 <li><a href="#NNG_ENOENT"><code>NNG_ENOENT</code></a>: The pipe <em>p</em> does not refer to an existing pipe.</li>
@@ -1418,6 +1507,18 @@ Note that like <code>strlen</code>, this size does not account for the zero byte
 <li><a href="#NNG_EBADTYPE"><code>NNG_EBADTYPE</code></a>: Incorrect type used for the option.</li>
 <li><a href="#NNG_ENOMEM"><code>NNG_ENOMEM</code></a>: Insufficient memory (returned by <code>nng_pipe_get_strdup</code> if allocation fails).</li>
 <li><a href="#NNG_ENOSPC"><code>NNG_ENOSPC</code></a>: Buffer too small (returned by <code>nng_pipe_get_strcpy</code> if buffer is insufficient).</li>
+</ul>
+<h2 id="pipe-scheme"><a class="header" href="#pipe-scheme">Pipe Scheme</a></h2>
+<pre><code class="language-c">nng_err nng_pipe_get_scheme(nng_pipe p, const char **schemep);
+</code></pre>
+<p><a name="a017"></a>
+The <code>nng_pipe_get_scheme</code> function returns the scheme from the URL of the endpoint that created
+the pipe, such as <code>tcp</code>, <code>ipc</code>, or <code>inproc</code>.
+The returned string is immutable and does not need to be freed by the caller.</p>
+<h3 id="errors-1-1"><a class="header" href="#errors-1-1">Errors</a></h3>
+<p>The <code>nng_pipe_get_scheme</code> function can return the following errors:</p>
+<ul>
+<li><a href="#NNG_ENOENT"><code>NNG_ENOENT</code></a>: The pipe <em>p</em> does not refer to an existing pipe.</li>
 </ul>
 <h2 id="pipe-notifications"><a class="header" href="#pipe-notifications">Pipe Notifications</a></h2>
 <pre><code class="language-c">typedef enum {
@@ -1430,7 +1531,7 @@ typedef void (*nng_pipe_cb)(nng_pipe, nng_pipe_ev, void *);
 
 nng_err nng_pipe_notify(nng_socket s, nng_pipe_ev ev, nng_pipe_cb cb, void *arg);
 </code></pre>
-<p>The <a name="a017"></a><code>nng_pipe_notify</code> function registers the callback function <em>cb</em>
+<p>The <a name="a018"></a><code>nng_pipe_notify</code> function registers the callback function <em>cb</em>
 to be called whenever the pipe event specified by
 <em>ev</em> occurs on the socket <em>s</em>.
 The callback <em>cb</em> will be passed <em>arg</em> as its final argument.</p>
@@ -1444,9 +1545,9 @@ Registering a callback implicitly unregisters any previously registered.</p>
 <tr><th>Event</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a name="a018"></a><code>NNG_PIPE_EV_ADD_PRE</code><a name="NNG_PIPE_EV_ADD_PRE"></a></td><td>This event occurs after a connection and negotiation has completed, but before the pipe is added to the socket. If the pipe is closed (using <a href="#closing-a-pipe"><code>nng_pipe_close</code></a>) at this point, the socket will never see the pipe, and no further events will occur for the given pipe.</td></tr>
-<tr><td><a name="a019"></a><code>NNG_PIPE_EV_ADD_POST</code><a name="NNG_PIPE_EV_ADD_POST"></a></td><td>This event occurs after the pipe is fully added to the socket. Prior to this time, it is not possible to communicate over the pipe with the socket.</td></tr>
-<tr><td><a name="a020"></a><code>NNG_PIPE_EV_REM_POST</code><a name="NNG_PIPE_EV_REM_POST"></a></td><td>This event occurs after the pipe has been removed from the socket. The underlying transport may be closed at this point, and it is not possible communicate using this pipe.</td></tr>
+<tr><td><a name="a019"></a><code>NNG_PIPE_EV_ADD_PRE</code><a name="NNG_PIPE_EV_ADD_PRE"></a></td><td>This event occurs after a connection and negotiation has completed, but before the pipe is added to the socket. If the pipe is closed (using <a href="#closing-a-pipe"><code>nng_pipe_close</code></a>) at this point, the socket will never see the pipe, and no further events will occur for the given pipe.</td></tr>
+<tr><td><a name="a020"></a><code>NNG_PIPE_EV_ADD_POST</code><a name="NNG_PIPE_EV_ADD_POST"></a></td><td>This event occurs after the pipe is fully added to the socket. Prior to this time, it is not possible to communicate over the pipe with the socket.</td></tr>
+<tr><td><a name="a021"></a><code>NNG_PIPE_EV_REM_POST</code><a name="NNG_PIPE_EV_REM_POST"></a></td><td>This event occurs after the pipe has been removed from the socket. The underlying transport may be closed at this point, and it is not possible communicate using this pipe.</td></tr>
 </tbody>
 </table>
 </div>
@@ -1608,7 +1709,7 @@ If this sleep waits without interruption, and then completes, the result from
 <p>If a timeout shorter than <em>msec</em> is set on <em>aio</em> using <a href="#set-timeout"><code>nng_aio_set_timeout</code></a>,
 then the sleep will wake up early, with a result code of <a href="#NNG_ETIMEDOUT"><code>NNG_ETIMEDOUT</code></a>.</p>
 </blockquote>
-<h2 id="see-also"><a class="header" href="#see-also">See Also</a></h2>
+<h2 id="see-also-1"><a class="header" href="#see-also-1">See Also</a></h2>
 <p><a href="#asynchronous-operations">Asynchronous Operations</a>,
 <a href="#synchronization-primitives">Synchronization</a></p>
 <!-- NOTE: This assumes that any page referencing this is located
@@ -1714,9 +1815,240 @@ to be specified. When this is done, the system will allocate a free port when th
 while starting a listener. Once this is done, the port number may need to be updated so that the
 URL can be used to configure a client. The <a name="a014"></a><code>nng_url_resolve_port</code> function updates such
 a URL with a new port. This will have no effect if the URL already has a non-zero port number.</p>
-<h2 id="see-also-1"><a class="header" href="#see-also-1">See Also</a></h2>
+<h2 id="see-also-2"><a class="header" href="#see-also-2">See Also</a></h2>
 <p>More information about Universal Resource Locators can be found in
 <a href="https://tools.ietf.org/html/rfc3986">RFC 3986</a>.</p>
+<!-- NOTE: This assumes that any page referencing this is located
+     in a directory two levels down.  Meaning ./api/somefile.md or
+     similar.  mdbook cannot accommodate links that are called from
+     different levels in the hierarchy. -->
+<!-- Symbol cross reference -->
+<!-- HTTP -->
+<!-- HTTP Status -->
+<!-- TLS -->
+<!-- Macros -->
+<!-- Protocols -->
+<!-- Transports -->
+<!-- Concept index -->
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="socket-addresses"><a class="header" href="#socket-addresses">Socket Addresses</a></h1>
+<pre><code class="language-c">typedef union nng_sockaddr {
+    uint16_t              s_family;
+    nng_sockaddr_ipc      s_ipc;
+    nng_sockaddr_inproc   s_inproc;
+    nng_sockaddr_in6      s_in6;
+    nng_sockaddr_in       s_in;
+    nng_sockaddr_abstract s_abstract;
+    nng_sockaddr_storage  s_storage;
+} nng_sockaddr;
+
+enum nng_sockaddr_family {
+    NNG_AF_UNSPEC   = 0,
+    NNG_AF_INPROC   = 1,
+    NNG_AF_IPC      = 2,
+    NNG_AF_INET     = 3,
+    NNG_AF_INET6    = 4,
+    NNG_AF_ABSTRACT = 5
+};
+</code></pre>
+<p>An <a name="a001"></a><code>nng_sockaddr</code> is used to represent the addresses used by
+underlying transports, such as TCP/IP addresses, IPC paths, and in-process
+names.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>The name <code>sockaddr</code> reflects its similarity to POSIX <code>struct sockaddr</code>.
+In <em>NNG</em>, these addresses are more closely associated with <a href="#pipes"><code>nng_pipe</code></a>
+and transport endpoints than with <a href="#sockets">sockets</a>.</p>
+</blockquote>
+<p>The structure is a union with different members for different address types.
+Every member structure has a <code>uint16_t</code> address family as its first field.
+This overlaps the <code>s_family</code> member of the union and indicates which member
+is valid.</p>
+<p>The <code>s_storage</code> member reserves enough space to store any supported socket
+address family. Applications should use the family-specific members instead
+when inspecting an address.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Family</th><th>Member</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>NNG_AF_UNSPEC</code></td><td>none</td><td>Invalid or unspecified address.</td></tr>
+<tr><td><code>NNG_AF_INPROC</code></td><td><code>s_inproc</code></td><td>In-process address for the <a href="#inproc-transport">inproc transport</a>.</td></tr>
+<tr><td><code>NNG_AF_IPC</code></td><td><code>s_ipc</code></td><td>Inter-process address for the <a href="#ipc-transport">IPC transport</a>.</td></tr>
+<tr><td><code>NNG_AF_INET</code></td><td><code>s_in</code></td><td>IPv4 address used by TCP, TLS, UDP, and similar IP transports.</td></tr>
+<tr><td><code>NNG_AF_INET6</code></td><td><code>s_in6</code></td><td>IPv6 address used by TCP, TLS, UDP, and similar IP transports.</td></tr>
+<tr><td><code>NNG_AF_ABSTRACT</code></td><td><code>s_abstract</code></td><td>Abstract socket address for the <a href="#ipc-transport">IPC transport</a> on Linux systems.</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="in-process-addresses"><a class="header" href="#in-process-addresses">In-Process Addresses</a></h2>
+<pre><code class="language-c">typedef struct nng_sockaddr_inproc {
+    uint16_t sa_family;
+    char     sa_name[NNG_MAXADDRLEN];
+} nng_sockaddr_inproc;
+</code></pre>
+<p>An <a name="a002"></a><code>nng_sockaddr_inproc</code> is the flavor of <a href="#socket-addresses"><code>nng_sockaddr</code></a> used for
+addresses associated with the <a href="#inproc-transport">inproc transport</a>.</p>
+<p>The <code>sa_family</code> field is always <code>NNG_AF_INPROC</code>.</p>
+<p>The <code>sa_name</code> field holds an arbitrary <code>NUL</code>-terminated C string identifying
+the in-process address. No other restrictions are placed on the name.</p>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>Applications should use the <code>sizeof</code> operator instead of hard coding the
+size of the <code>sa_name</code> member. The size is guaranteed to be at least 128.</p>
+</blockquote>
+<h2 id="ipc-addresses"><a class="header" href="#ipc-addresses">IPC Addresses</a></h2>
+<pre><code class="language-c">typedef struct nng_sockaddr_path nng_sockaddr_ipc;
+
+struct nng_sockaddr_path {
+    uint16_t sa_family;
+    char     sa_path[NNG_MAXADDRLEN];
+};
+</code></pre>
+<p>An <a name="a003"></a><code>nng_sockaddr_ipc</code> is the flavor of <a href="#socket-addresses"><code>nng_sockaddr</code></a> used for
+traditional path-based addresses associated with the <a href="#ipc-transport">IPC transport</a>.</p>
+<p>The <code>sa_family</code> field is always <code>NNG_AF_IPC</code>.</p>
+<p>The <code>sa_path</code> field holds a <code>NUL</code>-terminated C string corresponding to the
+path where the IPC socket is located. On systems using UNIX domain sockets,
+this is a path in the file system. On Windows systems, this is the named pipe
+path without the leading <code>\\.\pipe\</code> portion, which <em>NNG</em> adds automatically.</p>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>Applications should use the <code>sizeof</code> operator instead of hard coding the
+size of the <code>sa_path</code> member. The size is guaranteed to be at least 128,
+but paths of this length may not be supported on every system.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>Portable applications should restrict themselves to path names of not more
+than 90 bytes. Many systems have limits around 100 bytes, and some systems
+have smaller limits.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>If compatibility with legacy <em>nanomsg</em> applications is required, path names
+must not be longer than 122 bytes, including the final <code>NUL</code> byte.
+Legacy versions of <em>nanomsg</em> cannot express URLs longer than 128 bytes,
+including the <code>ipc://</code> prefix.</p>
+</blockquote>
+<h2 id="abstract-addresses"><a class="header" href="#abstract-addresses">Abstract Addresses</a></h2>
+<pre><code class="language-c">typedef struct nng_sockaddr_abstract {
+    uint16_t sa_family;
+    uint16_t sa_len;
+    uint8_t  sa_name[107];
+} nng_sockaddr_abstract;
+</code></pre>
+<p>An <a name="a004"></a><code>nng_sockaddr_abstract</code> is the flavor of <a href="#socket-addresses"><code>nng_sockaddr</code></a> used to
+represent abstract socket addresses for the <a href="#ipc-transport">IPC transport</a>.</p>
+<p>Abstract sockets are only supported on Linux at present. These sockets have
+a name that is an array of bytes, with no special meaning. Abstract sockets
+have no presence in the file system, do not honor file permissions, and are
+automatically cleaned up by the operating system when no longer in use.</p>
+<p>The <code>sa_family</code> field is always <code>NNG_AF_ABSTRACT</code>.</p>
+<p>The <code>sa_len</code> field gives the number of bytes stored in <code>sa_name</code>.</p>
+<p>The <code>sa_name</code> field holds the name of the abstract socket. The bytes of the
+name can have any value, including zero.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>The name does not include the leading <code>NUL</code> byte used on Linux to
+distinguish abstract socket addresses from path-based socket addresses.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>Abstract sockets are Linux-specific. They are not recommended for portable
+applications.</p>
+</blockquote>
+<h2 id="ipv4-addresses"><a class="header" href="#ipv4-addresses">IPv4 Addresses</a></h2>
+<pre><code class="language-c">typedef struct nng_sockaddr_in {
+    uint16_t sa_family;
+    uint16_t sa_port;
+    uint32_t sa_addr;
+} nng_sockaddr_in;
+</code></pre>
+<p>An <a name="a005"></a><code>nng_sockaddr_in</code> is the flavor of <a href="#socket-addresses"><code>nng_sockaddr</code></a> used for IPv4
+addresses, including the IP address and TCP or UDP port number. IPv6 addresses
+use <a href="#ipv6-addresses"><code>nng_sockaddr_in6</code></a> instead.</p>
+<p>The <code>sa_family</code> field is always <code>NNG_AF_INET</code>.</p>
+<p>The <code>sa_port</code> field holds the TCP or UDP port number in network byte order.
+A zero value indicates that no specific port number is specified.</p>
+<p>The <code>sa_addr</code> field holds the IPv4 address in network byte order.</p>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>The <code>sa_port</code> and <code>sa_addr</code> fields are in network byte order to facilitate
+their use with system APIs such as <code>inet_ntop</code>.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-important">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
+<p>Although this structure appears similar to BSD <code>sockaddr_in</code>, it is not
+the same type, and the two may not be used interchangeably.</p>
+</blockquote>
+<h2 id="ipv6-addresses"><a class="header" href="#ipv6-addresses">IPv6 Addresses</a></h2>
+<pre><code class="language-c">typedef struct nng_sockaddr_in6 {
+    uint16_t sa_family;
+    uint16_t sa_port;
+    uint32_t sa_scope;
+    uint8_t  sa_addr[16];
+} nng_sockaddr_in6;
+</code></pre>
+<p>An <a name="a006"></a><code>nng_sockaddr_in6</code> is the flavor of <a href="#socket-addresses"><code>nng_sockaddr</code></a> used for IPv6
+addresses, including the IP address and TCP or UDP port number. IPv4 addresses
+use <a href="#ipv4-addresses"><code>nng_sockaddr_in</code></a> instead.</p>
+<p>The <code>sa_family</code> field is always <code>NNG_AF_INET6</code>.</p>
+<p>The <code>sa_port</code> field holds the TCP or UDP port number in network byte order.
+A zero value indicates that no specific port number is specified.</p>
+<p>The <code>sa_scope</code> field is the IPv6 scope identifier. It is typically used with
+link-local addresses to identify a specific interface. The details of this
+value are platform-specific.</p>
+<p>The <code>sa_addr</code> field holds the IPv6 address in network byte order.</p>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>The <code>sa_port</code> and <code>sa_addr</code> fields are in network byte order to facilitate
+their use with system APIs such as <code>inet_ntop</code>.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-important">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
+<p>Although this structure appears similar to BSD <code>sockaddr_in6</code>, it is not
+the same type, and the two may not be used interchangeably.</p>
+</blockquote>
+<h2 id="format-an-address"><a class="header" href="#format-an-address">Format an Address</a></h2>
+<pre><code class="language-c">#define NNG_MAXADDRSTRLEN (NNG_MAXADDRLEN + 16)
+
+const char *nng_str_sockaddr(const nng_sockaddr *sa, char *buf, size_t bufsz);
+</code></pre>
+<p>The <a name="a007"></a><code>nng_str_sockaddr</code> function provides a displayable representation
+of the socket address <em>sa</em> in the buffer <em>buf</em>, which has room for <em>bufsz</em>
+bytes including the terminating <code>NUL</code> byte. The function returns <em>buf</em>.</p>
+<p>If the buffer is too small, the result will be truncated. A buffer of
+<code>NNG_MAXADDRSTRLEN</code> bytes is sufficient to avoid typical truncations, although
+very long IPC paths can still be truncated.</p>
+<p>As long as <em>bufsz</em> is greater than zero, the result will be <code>NUL</code>-terminated.</p>
+<blockquote class="blockquote-tag blockquote-tag-important">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
+<p>The string produced by <code>nng_str_sockaddr</code> is intended for display in logs
+and diagnostics. It is not intended to be parsed, and the display format
+may change without notice.</p>
+</blockquote>
+<h2 id="address-port"><a class="header" href="#address-port">Address Port</a></h2>
+<pre><code class="language-c">uint32_t nng_sockaddr_port(const nng_sockaddr *sa);
+</code></pre>
+<p>The <a name="a008"></a><code>nng_sockaddr_port</code> function returns the port number associated with
+<em>sa</em> in native byte order.</p>
+<p>For <code>NNG_AF_INET</code> and <code>NNG_AF_INET6</code> addresses, this is the TCP or UDP port.
+For address families that do not have a port number, zero is returned.</p>
+<h2 id="compare-addresses"><a class="header" href="#compare-addresses">Compare Addresses</a></h2>
+<pre><code class="language-c">bool nng_sockaddr_equal(const nng_sockaddr *sa1, const nng_sockaddr *sa2);
+</code></pre>
+<p>The <a name="a009"></a><code>nng_sockaddr_equal</code> function returns <code>true</code> if <em>sa1</em> and <em>sa2</em>
+represent the same address, or <code>false</code> otherwise.</p>
+<h2 id="hash-an-address"><a class="header" href="#hash-an-address">Hash an Address</a></h2>
+<pre><code class="language-c">uint64_t nng_sockaddr_hash(const nng_sockaddr *sa);
+</code></pre>
+<p>The <a name="a010"></a><code>nng_sockaddr_hash</code> function returns a non-zero 64-bit hash value
+for <em>sa</em>.</p>
+<p>This value is intended for building indexes, such as with the <a href="#id-map">ID map</a>.
+Collisions are possible. The hash value is not portable between systems and
+may not be portable between versions of <em>NNG</em>.</p>
 <!-- NOTE: This assumes that any page referencing this is located
      in a directory two levels down.  Meaning ./api/somefile.md or
      similar.  mdbook cannot accommodate links that are called from
@@ -1868,7 +2200,7 @@ size_t nng_aio_count(nng_aio *aio);
 <p>The <a name="a016"></a><code>nng_aio_result</code> function returns the result of the operation associated
 with the handle <em>aio</em>.
 If the operation was successful, then 0 is returned.
-Otherwise a non-zero <a href="#errors-1">error</a> code, such as <a href="#NNG_ECANCELED"><code>NNG_ECANCELED</code></a> or <a href="#NNG_ETIMEDOUT"><code>NNG_ETIMEDOUT</code></a>, is returned.</p>
+Otherwise a non-zero <a href="#errors-2">error</a> code, such as <a href="#NNG_ECANCELED"><code>NNG_ECANCELED</code></a> or <a href="#NNG_ETIMEDOUT"><code>NNG_ETIMEDOUT</code></a>, is returned.</p>
 <p>For operations that transfer data, <a name="a017"></a><code>nng_aio_count</code> returns the
 number of bytes transferred by the operation associated with the handle <em>aio</em>.
 Operations that do not transfer data, or do not keep a count, may return zero for this function.</p>
@@ -2047,7 +2379,7 @@ The <em>aio</em> may not be referenced again by the caller.</p>
 After calling this function they <em>must not</em> perform any further accesses
 to the <em>aio</em>.</p>
 </blockquote>
-<h2 id="see-also-2"><a class="header" href="#see-also-2">See Also</a></h2>
+<h2 id="see-also-3"><a class="header" href="#see-also-3">See Also</a></h2>
 <p><a href="#synchronization-primitives">Synchronization</a>,
 <a href="#threads">Threads</a>,
 <a href="#streams">Streams</a>,
@@ -2186,7 +2518,7 @@ condition_true = true;
 nng_cv_wake(cv);
 nng_mtx_unlock(m);
 </code></pre>
-<h2 id="see-also-3"><a class="header" href="#see-also-3">See Also</a></h2>
+<h2 id="see-also-4"><a class="header" href="#see-also-4">See Also</a></h2>
 <p><a href="#threads">Threads</a>,
 <a href="#time">Time</a>,
 <a href="#asynchronous-operations">Asynchronous I/O</a></p>
@@ -2264,7 +2596,7 @@ It also has the effect of blocking execution in the caller until <em>thr</em> ha
 <p>In order to facilitate debugging, <a name="a007"></a><code>nng_thread_set_name</code> may be called
 to provide a name for the thread. This may change how the thread is represented
 in debuggers. Not all platforms support setting the thread name.</p>
-<h2 id="see-also-4"><a class="header" href="#see-also-4">See Also</a></h2>
+<h2 id="see-also-5"><a class="header" href="#see-also-5">See Also</a></h2>
 <p><a href="#synchronization-primitives">Synchronization</a>,
 <a href="#asynchronous-operations">Asynchronous Operations</a></p>
 <!-- NOTE: This assumes that any page referencing this is located
@@ -2409,7 +2741,7 @@ This can be suppressed by setting either the <code>NO_COLOR</code> or <code>NNG_
 <p>The <a name="a012"></a><code>nng_system_logger</code> attempts to use an appropriate system facility to log messages.
 For POSIX systems, this means using <code>syslog</code> to process the messages.
 For other systems the defauilt behavior may be the same as <code>nng_stderr_logger</code>.</p>
-<h2 id="see-also-5"><a class="header" href="#see-also-5">See Also</a></h2>
+<h2 id="see-also-6"><a class="header" href="#see-also-6">See Also</a></h2>
 <p>The Syslog Protocol upon which this is based is documented in the following two IETF
 RFCS,</p>
 <ul>
@@ -2581,7 +2913,7 @@ The following units may be returned from <a name="a024"></a><code>nng_stat_unit<
 obtained via <a name="a030"></a><code>nng_stat_timestamp</code>. The timestamp is given in
 in milliseconds since a reference time, and the reference time used
 here is the same reference time used for <a href="#get-the-current-time"><code>nng_clock</code></a>.</p>
-<h2 id="see-also-6"><a class="header" href="#see-also-6">See Also</a></h2>
+<h2 id="see-also-7"><a class="header" href="#see-also-7">See Also</a></h2>
 <p><a href="#get-the-current-time"><code>nng_clock</code></a></p>
 <!-- NOTE: This assumes that any page referencing this is located
      in a directory two levels down.  Meaning ./api/somefile.md or
@@ -2596,7 +2928,7 @@ here is the same reference time used for <a href="#get-the-current-time"><code>n
 <!-- Transports -->
 <!-- Concept index -->
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="errors-1"><a class="header" href="#errors-1">Errors</a></h1>
+<h1 id="errors-2"><a class="header" href="#errors-2">Errors</a></h1>
 <pre><code class="language-c">typedef enum ... nng_err;
 </code></pre>
 <p>Many <em>NNG</em> functions can fail for a variety of reasons.
@@ -2955,6 +3287,8 @@ The <code>nng_stream_dialer_get_</code> and <code>nng_stream_listener_get_</code
 The <code>nng_stream_dialer_set_</code> and <code>nng_stream_listener_set_</code> function families change the value for the <em>dialer</em> or <em>listener</em>, taking it from <em>val</em>.</p>
 <p>These functions access an option as a specific type. The transport layer will have details about which options
 are available, and which type they may be accessed using.</p>
+<p>WebSocket streams support additional handshake, header, frame, and text-mode options.
+See the <a href="#websocket-transport">WebSocket transport</a> documentation for details.</p>
 <p>In the case of <code>nng_stream_dialer_get_string</code> and <code>nng_stream_listener_get_string</code>, the memory holding
 the string is only valid as long as the associated object remains open.</p>
 <p>In the case of <code>nng_stream_dialer_set_string</code> and <code>nng_stream_listener_set_string</code>, the string contents are copied if necessary, so that the caller
@@ -3018,7 +3352,7 @@ both configuring a different TLS configuration object, as well as mutating the e
 <h1 id="tls"><a class="header" href="#tls">TLS</a></h1>
 <p>NNG provides <a name="a001"></a>TLS (<a name="a002"></a>Transport Layer Security) support for transports and
 stream-based services that need encrypted and authenticated communication.
-TLS is used by the <a href="#tls-transport">TLS transport</a>, secure WebSocket transport, HTTP clients and servers,
+TLS is used by the <a href="#tls-transport">TLS transport</a>, secure <a href="#websocket-transport">WebSocket transport</a>, HTTP clients and servers,
 and raw <a href="#streams">streams</a> implementations that support it.</p>
 <p>TLS support depends on a TLS engine being available when NNG is built.
 If TLS support is not enabled, the TLS functions may be present as stubs and will return
@@ -3168,8 +3502,9 @@ They do not add a new hold; applications that need to retain the object independ
 <p>The <a href="#streams">Streams API</a> has corresponding <a href="#tls-configuration"><code>nng_stream_dialer_set_tls</code></a>,
 <a href="#tls-configuration"><code>nng_stream_dialer_get_tls</code></a>, <a href="#tls-configuration"><code>nng_stream_listener_set_tls</code></a>, and
 <a href="#tls-configuration"><code>nng_stream_listener_get_tls</code></a> functions.
-HTTP clients and servers also use TLS configuration objects for HTTPS; see <a href="#client-tls"><code>nng_http_client_set_tls</code></a>
-and related HTTP APIs.</p>
+HTTP clients and servers also use TLS configuration objects for HTTPS, including
+secure <a href="#websocket-transport">WebSocket transport</a> endpoints; see <a href="#client-tls"><code>nng_http_client_set_tls</code></a> and
+related HTTP APIs.</p>
 <h2 id="examples-4"><a class="header" href="#examples-4">Examples</a></h2>
 <p>The following examples use Scalability Protocol <a href="TODO.html">dialer</a> and <a href="TODO.html">listener</a> objects.
 For raw <a href="#streams">streams</a>, use the same configuration steps, but attach the configuration with
@@ -3771,7 +4106,7 @@ request interleaving.</p>
 <p>This function returns immediately, with no return value.
 Completion of the operation is signaled via the <em>aio</em>, and the final result
 may be obtained via <a href="#result-of-operation"><code>nng_aio_result</code></a>.</p>
-<h3 id="socket-addresses"><a class="header" href="#socket-addresses">Socket Addresses</a></h3>
+<h3 id="socket-addresses-1"><a class="header" href="#socket-addresses-1">Socket Addresses</a></h3>
 <pre><code class="language-c">nng_err nng_http_local_address(nng_http *conn, nng_sockaddr *addr);
 nng_err nng_http_remote_address(nng_http *conn, nng_sockaddr *addr);
 </code></pre>
@@ -3989,7 +4324,7 @@ exactly the value of the <code>Host</code> header sent by the client.
 does not support a single server listening on different ports concurrently.</p>
 </blockquote>
 <h3 id="detecting-addresses"><a class="header" href="#detecting-addresses">Detecting Addresses</a></h3>
-<p>The <a href="#socket-addresses"><code>nng_http_local_address</code></a> and <a href="#socket-addresses"><code>nng_http_remote_address</code></a> functions
+<p>The <a href="#socket-addresses-1"><code>nng_http_local_address</code></a> and <a href="#socket-addresses-1"><code>nng_http_remote_address</code></a> functions
 can be used to determine the local and remote addresses for an HTTP connection
 on the server side (in a handler) just like the can be for HTTP clients
 This can be useful to provide different handling behaviors based on network identity.</p>
@@ -4481,7 +4816,7 @@ contain the incoming <a href="#pipes">pipe</a> ID as the sole element in the hea
 If a message containing such a header is sent using a raw <em>BUS</em> socket, then,
 the message will be delivered to all connected pipes <em>except</em> the one
 identified in the header.
-This behavior is intended for use with <a href="TODO.html">device</a>
+This behavior is intended for use with <a href="#devices">device</a>
 configurations consisting of just a single socket.
 Such configurations are useful in the creation of rebroadcasters, and this
 capability prevents a message from being routed back to its source.
@@ -4525,7 +4860,7 @@ information, and is suitable when building simple one-to-one topologies.</p>
 including the legacy <a href="https://github.com/nanomsg/nanomsg">libnanomsg</a> library or <a href="https://github.com/nanomsg/mangos">mangos</a>.</p>
 </blockquote>
 <p>Version 1 of the protocol offers improved protection against loops when
-used with <a href="TODO.html">devices</a>.</p>
+used with <a href="#devices">devices</a>.</p>
 <h3 id="polyamorous-mode"><a class="header" href="#polyamorous-mode">Polyamorous Mode</a></h3>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
@@ -4556,7 +4891,7 @@ such as when replying to an incoming message.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
 <p>Directed send <em>only</em> works with directly connected peers.
-It will not function across <a href="TODO.html">device</a> proxies.</p>
+It will not function across <a href="#devices">device</a> proxies.</p>
 </blockquote>
 <p>In order to prevent head-of-line blocking, if the peer on the given pipe
 is not able to receive (or the pipe is no longer available, such as if the
@@ -4813,7 +5148,7 @@ in <a href="#raw-mode-sockets">raw mode</a>,
 and it will generally attempt to spread work requests to different peer repliers.</p>
 <blockquote class="blockquote-tag blockquote-tag-tip">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
-<p>This property, when combined with a <a href="TODO.html">device</a> can help provide a degree of load-balancing.</p>
+<p>This property, when combined with a <a href="#devices">device</a> can help provide a degree of load-balancing.</p>
 </blockquote>
 <p>The <em>REQ</em> protocol is the requester side, and the <a href="#rep-protocol"><em>REP</em></a> protocol
 is the replier side.</p>
@@ -4871,7 +5206,7 @@ last element in the array, and <em>must</em> have the most significant bit set.<
 <p>There may be additional <strong>peer ID</strong>s preceding the request ID.
 These will be distinguishable from the request ID by having their most
 significant bit clear.</p>
-<p>When a request message is received by a forwarding node (such as a <a href="TODO.html">device</a>),
+<p>When a request message is received by a forwarding node (such as a <a href="#devices">device</a>),
 the forwarding node prepends a
 32-bit peer ID (which <em>must</em> have the most significant bit clear),
 which is the forwarder’s way of identifying the directly connected
@@ -5110,7 +5445,7 @@ last element in the array, and <em>must</em> have the most significant bit set.<
 <p>There may be additional <strong>peer ID</strong>s preceding the survey ID.
 These will be distinguishable from the survey ID by having their most
 significant bit clear.</p>
-<p>When a survey message is received by a forwarding node (such as a <a href="TODO.html">device</a>),
+<p>When a survey message is received by a forwarding node (such as a <a href="#devices">device</a>),
 the forwarding node prepends a
 32-bit peer ID (which <em>must</em> have the most significant bit clear),
 which is the forwarder’s way of identifying the directly connected
@@ -5151,11 +5486,14 @@ pre-releases of <a href="https://github.com/nanomsg/nanomsg">libnanomsg</a>, but
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="transports"><a class="header" href="#transports">Transports</a></h1>
-<p>This section documents transports for Scalabity Protocols implemented by NNG.</p>
+<p>This section documents transports for Scalability Protocols implemented by NNG.</p>
 <ul>
-<li><a href="#socket-transport-experimental">BSD Socket</a></li>
-<li><a href="#ipc-transport">Inter-Process Transport</a></li>
 <li><a href="#inproc-transport">Intra-Process Transport</a></li>
+<li><a href="#ipc-transport">Inter-Process Transport</a></li>
+<li><a href="#tcp-transport">TCP</a></li>
+<li><a href="#tls-transport">TLS</a></li>
+<li><a href="#websocket-transport">WebSocket</a></li>
+<li><a href="#socket-transport-experimental">BSD Socket</a></li>
 <li><a href="#udp-transport-experimental">UDP</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -5174,7 +5512,7 @@ same application, and they will not interfere with one another.</p>
 <p>Two applications may also use the same URL without interfering with each other.
 They will however be unable to communicate with each other using that URL.</p>
 <h2 id="socket-address"><a class="header" href="#socket-address">Socket Address</a></h2>
-<p>When using an <a href="TODO.html"><code>nng_sockaddr</code></a> structure, the actual structure is of type <a href="TODO.html"><code>nng_sockaddr_inproc</code></a>.</p>
+<p>When using an <a href="#socket-addresses"><code>nng_sockaddr</code></a> structure, the actual structure is of type <a href="#in-process-addresses"><code>nng_sockaddr_inproc</code></a>.</p>
 <h2 id="transport-options"><a class="header" href="#transport-options">Transport Options</a></h2>
 <p>The <em>inproc</em> transport has no special options.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
@@ -5260,9 +5598,9 @@ the system when no longer in use.</p>
 <p>Abstract sockets ignore socket permissions, but it is still possible to determine the credentials
 of the peer with <a href="#NNG_OPT_PEER_UID"><code>NNG_OPT_PEER_UID</code></a>, and similar options.<sup class="footnote-reference" id="fr-peer_random-1"><a href="#footnote-peer_random">2</a></sup></p>
 <h3 id="socket-address-1"><a class="header" href="#socket-address-1">Socket Address</a></h3>
-<p>When using an <a href="TODO.html"><code>nng_sockaddr</code></a> structure,
-the actual structure is of type <a href="TODO.html"><code>nng_sockaddr_ipc</code></a>,
-except for abstract sockets, which use <a href="TODO.html"><code>nng_sockaddr_abstract</code></a>.</p>
+<p>When using an <a href="#socket-addresses"><code>nng_sockaddr</code></a> structure,
+the actual structure is of type <a href="#ipc-addresses"><code>nng_sockaddr_ipc</code></a>,
+except for abstract sockets, which use <a href="#abstract-addresses"><code>nng_sockaddr_abstract</code></a>.</p>
 <h3 id="transport-options-1"><a class="header" href="#transport-options-1">Transport Options</a></h3>
 <p>The following transport options are supported by this transport,
 where supported by the underlying platform.</p>
@@ -5338,8 +5676,8 @@ for a <a href="TODO.html">listener</a>, it is better to use an IP address that i
 local system, or the zero address to listen to all interfaces.</p>
 </blockquote>
 <h3 id="socket-address-2"><a class="header" href="#socket-address-2">Socket Address</a></h3>
-<p>When using an <a href="TODO.html"><code>nng_sockaddr</code></a>,
-the concrete type is either <a href="TODO.html"><code>nng_sockaddr_in</code></a> or <a href="TODO.html"><code>nng_sockaddr_in6</code></a>, depending on whether
+<p>When using an <a href="#socket-addresses"><code>nng_sockaddr</code></a>,
+the concrete type is either <a href="#ipv4-addresses"><code>nng_sockaddr_in</code></a> or <a href="#ipv6-addresses"><code>nng_sockaddr_in6</code></a>, depending on whether
 IPv4 or IPv6 is in use.</p>
 <h3 id="transport-options-2"><a class="header" href="#transport-options-2">Transport Options</a></h3>
 <p>The following transport options are supported by this transport,
@@ -5416,8 +5754,8 @@ If left empty, IPv6 will be selected if available on the host, otherwise IPv4 wi
 The name in the URL is used when validating the certificate supplied by the server.</p>
 </blockquote>
 <h3 id="socket-address-3"><a class="header" href="#socket-address-3">Socket Address</a></h3>
-<p>When using an <a href="TODO.html"><code>nng_sockaddr</code></a> structure,
-the concrete type is either <a href="TODO.html"><code>nng_sockaddr_in</code></a> or <a href="TODO.html"><code>nng_sockaddr_in6</code></a>,
+<p>When using an <a href="#socket-addresses"><code>nng_sockaddr</code></a> structure,
+the concrete type is either <a href="#ipv4-addresses"><code>nng_sockaddr_in</code></a> or <a href="#ipv6-addresses"><code>nng_sockaddr_in6</code></a>,
 depending on whether IPv4 or IPv6 is in use.</p>
 <h3 id="transport-options-3"><a class="header" href="#transport-options-3">Transport Options</a></h3>
 <p>The following transport options are supported by this transport,
@@ -5455,8 +5793,186 @@ For richer peer certificate information, use <a href="#peer-certificates"><code>
 <!-- Transports -->
 <!-- Concept index -->
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="websocket-transport"><a class="header" href="#websocket-transport">WebSocket Transport</a></h1>
+<h2 id="description-4"><a class="header" href="#description-4">DESCRIPTION</a></h2>
+<p>The <a name="a001"></a><em>WebSocket</em> transport<a name="a002"></a> provides communication
+between peers across a TCP/IP network using
+<a href="https://www.rfc-editor.org/rfc/rfc6455">WebSockets</a>.
+It supports the Scalability Protocols over WebSocket, and also supports
+raw WebSocket connections through the <a href="#streams">streams</a> API.</p>
+<p>Both IPv4 and IPv6 are supported when the underlying platform supports them.
+The protocol details for Scalability Protocol sockets are documented in the
+<a href="http://nanomsg.org/rfcs/sp-websocket-v1.html">WebSocket Mapping for Scalability Protocols</a>.</p>
+<p>The secure WebSocket schemes use TLS over TCP.
+TLS configuration objects and certificate APIs are documented in <a href="#tls">TLS</a>, and
+the underlying TCP behavior is similar to the <a href="#tcp-transport">TCP</a> and <a href="#tls-transport">TLS transport</a> transports.
+WebSocket handshakes use NNG’s <a href="#http-support">HTTP Support</a>.</p>
+<h3 id="uri-formats-3"><a class="header" href="#uri-formats-3">URI Formats</a></h3>
+<p>This transport uses URIs using the scheme <a name="a003"></a><code>ws://</code>, followed by an
+<a name="a004"></a>IP address or <a name="a005"></a>hostname, an optional TCP port number, and an
+optional path.
+If no port is specified, port 80 is used.
+If no path is specified, <code>/</code> is used.</p>
+<p>For example, <code>ws://localhost/app/pubsub</code> connects to port 80 on <code>localhost</code>,
+using the path <code>/app/pubsub</code>.
+The path is significant: different listeners can share the same host and port
+when they use different WebSocket paths.</p>
+<p>Secure WebSocket endpoints use the <a name="a006"></a><code>wss://</code> scheme and default to TCP port 443.
+The URI format is otherwise the same as <code>ws://</code>.</p>
+<h4 id="forcing-ipv4-or-ipv6-2"><a class="header" href="#forcing-ipv4-or-ipv6-2">Forcing IPv4 or IPv6</a></h4>
+<p>To force either IPv4 or IPv6, the scheme may be specified as <code>ws4://</code> or
+<code>ws6://</code> instead of <code>ws://</code>.
+The secure forms are <code>wss4://</code> and <code>wss6://</code>.
+These should only be needed when a hostname might resolve to either address family.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>Specifying <code>ws6://</code> or <code>wss6://</code> may not prevent IPv4 hosts from being used with
+IPv4-in-IPv6 addresses, particularly when listening on wildcard addresses.
+The details vary across operating systems.
+The <code>ws4://</code>, <code>ws6://</code>, <code>wss4://</code>, and <code>wss6://</code> schemes are specific to NNG.</p>
+</blockquote>
+<h4 id="ipv6-addresses-1"><a class="header" href="#ipv6-addresses-1">IPv6 Addresses</a></h4>
+<p>For IPv6 literal addresses, the IPv6 address must be enclosed in square brackets.
+For example, <code>ws://[::1]:8080/app/pubsub</code> refers to port 8080 on the IPv6
+loopback address with the path <code>/app/pubsub</code>.</p>
+<h4 id="listening-to-all-addresses-2"><a class="header" href="#listening-to-all-addresses-2">Listening to All Addresses</a></h4>
+<p>When listening, a zero IP address can be supplied by either eliding the address
+altogether, or by specifying <code>0.0.0.0</code> (IPv4) or <code>::</code> (IPv6) explicitly.
+If left empty, IPv6 will be selected if available on the host, otherwise IPv4
+will be selected.</p>
+<p>For example, the following URIs are equivalent for listening on port 9999:</p>
+<ul>
+<li><code>ws://0.0.0.0:9999/pipe</code></li>
+<li><code>ws://:9999/pipe</code></li>
+</ul>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>IP addresses may be more reliable than host names for listeners.
+Certificate validation for <code>wss://</code> endpoints generally works best when
+clients use host names rather than IP addresses.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>The URL host name, when present, is also used in the HTTP <code>Host</code> header
+during the WebSocket handshake.</p>
+</blockquote>
+<h3 id="socket-address-4"><a class="header" href="#socket-address-4">Socket Address</a></h3>
+<p>When using an <a href="#socket-addresses"><code>nng_sockaddr</code></a>,
+the concrete type is either <a href="#ipv4-addresses"><code>nng_sockaddr_in</code></a> or <a href="#ipv6-addresses"><code>nng_sockaddr_in6</code></a>,
+depending on whether IPv4 or IPv6 is in use.</p>
+<h3 id="shared-http-server-instances"><a class="header" href="#shared-http-server-instances">Shared HTTP Server Instances</a></h3>
+<p>WebSocket listeners use shared HTTP server instances.
+This allows multiple sockets, stream listeners, or other HTTP services in the
+same process to share a hostname and port.
+For example, one process can listen on <code>ws://:8080/one</code> and <code>ws://:8080/two</code>
+with different NNG sockets.</p>
+<p>When a listener is created, it is registered with an existing HTTP server
+instance when one can be found.
+The matching algorithm uses the configured hostname or IP address string and
+port, so listeners are easiest to reason about when they use numeric IP
+addresses or an empty host name.</p>
+<p>Because a shared server instance has one TLS configuration, changing the TLS
+configuration may not be possible after another listener has already started
+that server.
+The shared server instance can also be used by other NNG HTTP services in the
+same process, such as static content handlers.</p>
+<h3 id="scalability-protocol-use"><a class="header" href="#scalability-protocol-use">Scalability Protocol Use</a></h3>
+<p>When the WebSocket transport is used with NNG sockets, it carries binary
+Scalability Protocol messages over WebSocket binary frames.
+The transport sets the WebSocket subprotocol during the handshake.
+For example, a REQ socket advertises the peer protocol name expected by the
+matching REP peer.</p>
+<p>Applications can configure WebSocket headers, frame sizes, TCP options, and
+TLS options on the usual <a href="TODO.html">dialer</a> and <a href="TODO.html">listener</a> objects before they are
+started.
+After a connection is established, HTTP handshake headers and the request URI
+can be inspected from the <a href="#pipes">pipe</a>.</p>
+<h3 id="stream-use"><a class="header" href="#stream-use">Stream Use</a></h3>
+<p>The same <code>ws://</code> and <code>wss://</code> URLs can be used with <a href="#creating-a-stream-factory"><code>nng_stream_dialer_alloc</code></a>
+and <a href="#creating-a-stream-factory"><code>nng_stream_listener_alloc</code></a>.
+This mode gives applications direct access to a WebSocket connection as an
+<a href="#stream-type"><code>nng_stream</code></a>, using <a href="#sending-and-receiving-data"><code>nng_stream_send</code></a> and <a href="#sending-and-receiving-data"><code>nng_stream_recv</code></a>.</p>
+<p>Raw WebSocket streams use binary frames by default.
+They can be configured to send or receive text frames with
+<a href="#NNG_OPT_WS_SEND_TEXT"><code>NNG_OPT_WS_SEND_TEXT</code></a> and <a href="#NNG_OPT_WS_RECV_TEXT"><code>NNG_OPT_WS_RECV_TEXT</code></a>, which is useful when
+communicating with third-party WebSocket peers.
+These text-frame options should not be used with Scalability Protocol sockets,
+which require binary protocol data.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>NNG does not validate that text frames contain valid UTF-8.
+Applications that need strict RFC 6455 conformance must validate text data
+themselves and close the connection when invalid data is received.</p>
+</blockquote>
+<h3 id="tls-configuration-1"><a class="header" href="#tls-configuration-1">TLS Configuration</a></h3>
+<p>The <code>wss://</code>, <code>wss4://</code>, and <code>wss6://</code> schemes use TLS.
+TLS support must be enabled in the NNG build.</p>
+<p>For Scalability Protocol sockets, configure TLS with <a href="#using-configuration-objects"><code>nng_dialer_set_tls</code></a> or
+<a href="#using-configuration-objects"><code>nng_listener_set_tls</code></a> before starting the dialer or listener.
+For raw streams, configure TLS with <a href="#tls-configuration"><code>nng_stream_dialer_set_tls</code></a> or
+<a href="#tls-configuration"><code>nng_stream_listener_set_tls</code></a> before dialing or listening.</p>
+<p>The set functions take their own hold on the <a href="#configuration-objects"><code>nng_tls_config</code></a> object, so the
+caller may release its reference after a successful call.
+The corresponding get functions do not add a new hold; callers that retain the
+returned configuration independently should call <a href="#configuration-objects"><code>nng_tls_config_hold</code></a>.</p>
+<p>Once the underlying HTTP server, dialer, or listener has started using a TLS
+configuration, that configuration cannot be changed.
+This is especially important when multiple <code>wss://</code> listeners share the same
+HTTP server instance.</p>
+<p>Peer certificate information can be obtained with <a href="#peer-certificates"><code>nng_pipe_peer_cert</code></a> for
+Scalability Protocol pipes or <a href="#tls-peer-certificates"><code>nng_stream_peer_cert</code></a> for streams.</p>
+<h3 id="transport-and-stream-options"><a class="header" href="#transport-and-stream-options">Transport and Stream Options</a></h3>
+<p>The following options are supported by this transport, where supported by the
+underlying platform.
+Options that change connection behavior must be set before the dialer,
+listener, stream dialer, or stream listener is started.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Option</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>NNG_OPT_TCP_NODELAY</code></td><td><code>bool</code></td><td>Disable or enable use of <a name="a007"></a>Nagle’s algorithm for TCP connections. Normally should be set to <code>true</code>.</td></tr>
+<tr><td><code>NNG_OPT_TCP_KEEPALIVE</code></td><td><code>bool</code></td><td>Enable or disable use of TCP keep-alive. Set to <code>false</code> by default.</td></tr>
+<tr><td><code>NNG_OPT_BOUND_PORT</code><a name="NNG_OPT_BOUND_PORT"></a></td><td><code>int</code></td><td>The locally bound TCP port number (1-65535), read-only for listener objects only.</td></tr>
+<tr><td><code>NNG_OPT_WS_HEADER</code><a name="NNG_OPT_WS_HEADER"></a></td><td><code>string</code></td><td>Option prefix for HTTP headers. Append the header name to set a handshake header on a dialer or listener, or to retrieve a received header from a connected pipe or stream. For example, <code>NNG_OPT_WS_HEADER "X-Trace-ID"</code> refers to the <code>X-Trace-ID</code> header.</td></tr>
+<tr><td><code>NNG_OPT_WS_PROTOCOL</code><a name="NNG_OPT_WS_PROTOCOL"></a></td><td><code>string</code></td><td>WebSocket subprotocol, corresponding to the <code>Sec-WebSocket-Protocol</code> header. Scalability Protocol sockets configure this automatically.</td></tr>
+<tr><td><code>NNG_OPT_WS_REQUEST_URI</code><a name="NNG_OPT_WS_REQUEST_URI"></a></td><td><code>string</code></td><td>Read-only request URI sent by the client, available from connected pipes and streams. This is useful for listeners that handle a subtree.</td></tr>
+<tr><td><code>NNG_OPT_WS_SENDMAXFRAME</code><a name="NNG_OPT_WS_SENDMAXFRAME"></a></td><td><code>size</code></td><td>Maximum WebSocket frame size to send before fragmenting. The default is 64 KiB. Larger values can improve throughput but may increase latency and peer buffering requirements. There is no WebSocket negotiation for this value.</td></tr>
+<tr><td><code>NNG_OPT_WS_RECVMAXFRAME</code><a name="NNG_OPT_WS_RECVMAXFRAME"></a></td><td><code>size</code></td><td>Maximum WebSocket frame size accepted from the peer. Frames larger than this are rejected. This should not normally be larger than <a href="#NNG_OPT_RECVMAXSZ"><code>NNG_OPT_RECVMAXSZ</code></a>.</td></tr>
+<tr><td><code>NNG_OPT_WS_HEADER_RESET</code><a name="NNG_OPT_WS_HEADER_RESET"></a></td><td><code>bool</code></td><td>Read-only option for connected pipes and streams. Reading it resets HTTP header iteration to the beginning.</td></tr>
+<tr><td><code>NNG_OPT_WS_HEADER_NEXT</code><a name="NNG_OPT_WS_HEADER_NEXT"></a></td><td><code>bool</code></td><td>Read-only option for connected pipes and streams. Reading it advances HTTP header iteration. It returns <code>true</code> when another header is available, and <code>false</code> when iteration is complete.</td></tr>
+<tr><td><code>NNG_OPT_WS_HEADER_KEY</code><a name="NNG_OPT_WS_HEADER_KEY"></a></td><td><code>string</code></td><td>Read-only option for connected pipes and streams. Returns the current HTTP header name after <a href="#NNG_OPT_WS_HEADER_NEXT"><code>NNG_OPT_WS_HEADER_NEXT</code></a> has returned <code>true</code>.</td></tr>
+<tr><td><code>NNG_OPT_WS_HEADER_VALUE</code><a name="NNG_OPT_WS_HEADER_VALUE"></a></td><td><code>string</code></td><td>Read-only option for connected pipes and streams. Returns the current HTTP header value after <a href="#NNG_OPT_WS_HEADER_NEXT"><code>NNG_OPT_WS_HEADER_NEXT</code></a> has returned <code>true</code>.</td></tr>
+<tr><td><code>NNG_OPT_WS_SEND_TEXT</code><a name="NNG_OPT_WS_SEND_TEXT"></a></td><td><code>bool</code></td><td>Raw streams only. Send WebSocket text frames instead of binary frames. NNG does not validate UTF-8.</td></tr>
+<tr><td><code>NNG_OPT_WS_RECV_TEXT</code><a name="NNG_OPT_WS_RECV_TEXT"></a></td><td><code>bool</code></td><td>Raw streams only. Accept inbound WebSocket text frames as well as binary frames. NNG does not validate UTF-8.</td></tr>
+<tr><td><code>NNG_OPT_TLS_VERIFIED</code><a name="NNG_OPT_TLS_VERIFIED"></a></td><td><code>bool</code></td><td><code>wss://</code> only. Read-only option indicating whether the remote peer was verified using TLS authentication.</td></tr>
+<tr><td><code>NNG_OPT_TLS_PEER_CN</code><a name="NNG_OPT_TLS_PEER_CN"></a></td><td><code>string</code></td><td><code>wss://</code> only. Read-only option returning the common name from the peer certificate, when available.</td></tr>
+</tbody>
+</table>
+</div>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p><code>NNG_OPT_TLS_VERIFIED</code> and <code>NNG_OPT_TLS_PEER_CN</code> may not be meaningful if
+peer authentication is disabled.
+For richer peer certificate information, use <a href="#peer-certificates"><code>nng_pipe_peer_cert</code></a> or
+<a href="#tls-peer-certificates"><code>nng_stream_peer_cert</code></a>.</p>
+</blockquote>
+<!-- NOTE: This assumes that any page referencing this is located
+     in a directory two levels down.  Meaning ./api/somefile.md or
+     similar.  mdbook cannot accommodate links that are called from
+     different levels in the hierarchy. -->
+<!-- Symbol cross reference -->
+<!-- HTTP -->
+<!-- HTTP Status -->
+<!-- TLS -->
+<!-- Macros -->
+<!-- Protocols -->
+<!-- Transports -->
+<!-- Concept index -->
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="socket-transport-experimental"><a class="header" href="#socket-transport-experimental">Socket Transport (Experimental)</a></h1>
-<h2 id="description-4"><a class="header" href="#description-4">Description</a></h2>
+<h2 id="description-5"><a class="header" href="#description-5">Description</a></h2>
 <p>The <a name="a001"></a><em>socket</em> transport supports communication between
 peers across arbitrary BSD sockets, such as those that are
 created with <a href="#create-socket-pair"><code>nng_socket_pair</code></a>.</p>
@@ -5477,7 +5993,7 @@ for the <em><a href="#tcp-transport">tcp</a></em> transport, but this is an impl
 </blockquote>
 <h2 id="url-format-1"><a class="header" href="#url-format-1">URL Format</a></h2>
 <p>This transport uses the URL <a name="a003"></a><code>socket://</code>, without further qualification.</p>
-<h2 id="socket-address-4"><a class="header" href="#socket-address-4">Socket Address</a></h2>
+<h2 id="socket-address-5"><a class="header" href="#socket-address-5">Socket Address</a></h2>
 <p>The socket address will be of family <a name="a004"></a><code>NNG_AF_UNSPEC</code>.
 There are no further socket details available.</p>
 <h2 id="transport-options-4"><a class="header" href="#transport-options-4">Transport Options</a></h2>
@@ -5524,7 +6040,7 @@ These behave in exactly the same fashion as for the <em><a href="#ipc-transport"
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="udp-transport-experimental"><a class="header" href="#udp-transport-experimental">UDP Transport (Experimental)</a></h1>
-<h2 id="description-5"><a class="header" href="#description-5">Description</a></h2>
+<h2 id="description-6"><a class="header" href="#description-6">Description</a></h2>
 <p>The <a name="a001"></a><em>udp</em> transport supports communication between peers using <a name="a002"></a>UDP.</p>
 <p>UDP is a very light-weight connection-less, unreliable, unordered delivery mechanism.</p>
 <p>Both <a name="a003"></a>IPv4 and <a name="a004"></a>IPv6 are supported when the underlying platform also supports it.</p>
@@ -5571,11 +6087,11 @@ and could be used to listen to port 9999 on the host:</p>
 <li><code>udp://0.0.0.0:9999</code></li>
 <li><code>udp://:9999</code></li>
 </ol>
-<h2 id="socket-address-5"><a class="header" href="#socket-address-5">Socket Address</a></h2>
-<p>When using an <a href="TODO.html"><code>nng_sockaddr</code></a> structure,
+<h2 id="socket-address-6"><a class="header" href="#socket-address-6">Socket Address</a></h2>
+<p>When using an <a href="#socket-addresses"><code>nng_sockaddr</code></a> structure,
 the actual structure is either of type
-<a href="TODO.html"><code>nng_sockaddr_in</code></a> (for IPv4) or
-<a href="TODO.html"><code>nng_sockaddr_in6</code></a> (for IPv6).</p>
+<a href="#ipv4-addresses"><code>nng_sockaddr_in</code></a> (for IPv4) or
+<a href="#ipv6-addresses"><code>nng_sockaddr_in6</code></a> (for IPv6).</p>
 <h2 id="transport-options-5"><a class="header" href="#transport-options-5">Transport Options</a></h2>
 <p>The following transport options are supported by this transport,
 where supported by the underlying platform.</p>
@@ -5725,6 +6241,14 @@ not resubmit an operation that returns it. This is particularly important for ca
 resubmit operations. Failure to observe this rule will lead to an infinite loop
 as any further operations on the object will fail immediately with <code>NNG_ESTOPPED</code>.</p>
 <p>The error codes <code>NNG_EAMBIGUOUS</code> and <code>NNG_ENOARG</code> have been removed.</p>
+<h2 id="device-socket-ownership"><a class="header" href="#device-socket-ownership">Device Socket Ownership</a></h2>
+<p>The <a href="#devices"><code>nng_device</code></a> and <a href="#asynchronous-devices"><code>nng_device_aio</code></a> functions now take ownership of the sockets
+when the device starts successfully. Applications must not use those sockets again,
+including closing them with <a href="#closing-a-socket"><code>nng_socket_close</code></a>. Attempts to use a socket owned by a
+device fail with <code>NNG_EBUSY</code>.</p>
+<p>The device closes the sockets when the device stops. If an application needs to stop a
+device under program control, it should use <a href="#asynchronous-devices"><code>nng_device_aio</code></a>, cancel the aio, and wait
+for it to complete.</p>
 <h2 id="aio-provider-api-changes"><a class="header" href="#aio-provider-api-changes">AIO Provider API changes</a></h2>
 <p>The API used for providers for asynchronous I/O operations has changed slightly.</p>
 <ul>
@@ -5751,7 +6275,7 @@ can be simply removed from your application:</p>
 </ul>
 <p>Additionally, the header files containing these functions have been removed, such as
 <code>nng/transport/ipc/ipc.h</code>. Simply remove <code>#include</code> references to those files.</p>
-<h2 id="tls-configuration-1"><a class="header" href="#tls-configuration-1">TLS Configuration</a></h2>
+<h2 id="tls-configuration-2"><a class="header" href="#tls-configuration-2">TLS Configuration</a></h2>
 <p>The support for configuring TLS via <code>NNG_OPT_TLS_CONFIG</code>, <code>NNG_TLS_AUTH_MODE</code>, <code>NNG_OPT_TLS_CA_FILE</code>,
 <code>NNG_OPT_TLS_SERVER_NAME</code>, and similar has been removed.</p>
 <p>Instead configuration must be performed by allocating
@@ -6049,7 +6573,7 @@ NNG approach to messages. Likewise there is no <code>struct nn_cmsghdr</code> eq
 <tr><td><code>nn_sendmsg</code></td><td><a href="#nng_sendmsg"><code>nng_sendmsg</code></a></td><td></td></tr>
 <tr><td><code>nn_getsockopt</code></td><td>[<code>nng_socket_get</code>]</td><td>NNG has typed accessors for options, and also separate functions for dialers and listeners.</td></tr>
 <tr><td><code>nn_setsockopt</code></td><td>[<code>nng_socket_set</code>]</td><td></td></tr>
-<tr><td><code>nn_device</code></td><td><a href="TODO.html"><code>nng_device</code></a></td><td></td></tr>
+<tr><td><code>nn_device</code></td><td><a href="#devices"><code>nng_device</code></a></td><td></td></tr>
 <tr><td><code>nn_poll</code></td><td>None</td><td>Can be constructed using <code>nng_aio</code>. Few if any applications ever used this API.</td></tr>
 <tr><td><code>nn_term</code></td><td><a href="#finalization"><code>nng_fini</code></a></td><td>The <code>nng_fini</code> API can do this, but is not recommended except when debugging memory leaks.</td></tr>
 <tr><td><code>nn_get_statistic</code></td><td><a href="#collecting-a-snapshot"><code>nng_stats_get</code></a></td><td>The statistics in NNG are completely different, with different semantics and no stability guarantees.</td></tr>
@@ -6175,22 +6699,24 @@ condition variable, <a href="#a009">1</a><br />
 connection, <a href="#a003">1</a><br />
 context, <a href="#a001">1</a><br />
 CPU-bound, <a href="#a003">1</a><br />
+device, <a href="#a001">1</a><br />
 duration, <a href="#a003">1</a><br />
 error message, <a href="#a002">1</a><br />
 event loop, <a href="#a042">1</a><br />
 flow control, <a href="#a006">1</a><br />
+forwarder, <a href="#a002">1</a><br />
 gather, <a href="#a024">1</a><br />
 <code>getopt</code>, <a href="#a003">1</a><br />
 half-duplex, <a href="#a004">1</a><br />
 header, <a href="#a003">1</a><br />
-hostname, <a href="#a005">1</a>, <a href="#a008">2</a><br />
+hostname, <a href="#a005">1</a>, <a href="#a008">2</a>, <a href="#a005">3</a><br />
 idempotent, <a href="#a004">1</a><br />
 <code>INADDR_ANY</code>, <a href="#a007">1</a><br />
 <em>inproc</em>, <a href="#a002">1</a><br />
 <em>inproc</em> transport, <a href="#a001">1</a><br />
 <code>inproc://</code>, <a href="#a004">1</a><br />
 intra-process, <a href="#a003">1</a><br />
-IP address, <a href="#a004">1</a>, <a href="#a007">2</a><br />
+IP address, <a href="#a004">1</a>, <a href="#a007">2</a>, <a href="#a004">3</a><br />
 <em>ipc</em>, <a href="#a002">1</a><br />
 <em>ipc</em> transport, <a href="#a001">1</a><br />
 <code>ipc://</code>, <a href="#a005">1</a><br />
@@ -6206,7 +6732,7 @@ mTLS, <a href="#a030">1</a><br />
 MTU, <a href="#a008">1</a><br />
 mutex, <a href="#a002">1</a><br />
 mutual TLS, <a href="#a029">1</a><br />
-Nagle’s algorithm, <a href="#a006">1</a>, <a href="#a009">2</a><br />
+Nagle’s algorithm, <a href="#a006">1</a>, <a href="#a009">2</a>, <a href="#a007">3</a><br />
 named pipes, <a href="#a004">1</a><br />
 <code>NNG_AF_UNSPEC</code>, <a href="#a004">1</a><br />
 <code>nng_aio</code>, <a href="#a001">1</a><br />
@@ -6249,6 +6775,8 @@ named pipes, <a href="#a004">1</a><br />
 <code>nng_cv_wait</code>, <a href="#a013">1</a><br />
 <code>nng_cv_wake</code>, <a href="#a014">1</a><br />
 <code>nng_cv_wake1</code>, <a href="#a015">1</a><br />
+<code>nng_device</code>, <a href="#a004">1</a>, <a href="#a006">2</a>, <a href="#a008">3</a><br />
+<code>nng_device_aio</code>, <a href="#a005">1</a>, <a href="#a007">2</a>, <a href="#a009">3</a><br />
 <code>nng_dialer_get_tls</code>, <a href="#a025">1</a><br />
 <code>nng_dialer_set_tls</code>, <a href="#a026">1</a><br />
 <code>nng_duration</code>, <a href="#a002">1</a><br />
@@ -6375,12 +6903,13 @@ named pipes, <a href="#a004">1</a><br />
 <code>nng_pipe</code>, <a href="#a001">1</a><br />
 <code>nng_pipe_close</code>, <a href="#a006">1</a><br />
 <code>nng_pipe_dialer</code>, <a href="#a007">1</a><br />
-<code>NNG_PIPE_EV_ADD_POST</code>, <a href="#a019">1</a><br />
-<code>NNG_PIPE_EV_ADD_PRE</code>, <a href="#a018">1</a><br />
-<code>NNG_PIPE_EV_REM_POST</code>, <a href="#a020">1</a><br />
+<code>NNG_PIPE_EV_ADD_POST</code>, <a href="#a020">1</a><br />
+<code>NNG_PIPE_EV_ADD_PRE</code>, <a href="#a019">1</a><br />
+<code>NNG_PIPE_EV_REM_POST</code>, <a href="#a021">1</a><br />
 <code>nng_pipe_get_bool</code>, <a href="#a010">1</a><br />
 <code>nng_pipe_get_int</code>, <a href="#a011">1</a><br />
 <code>nng_pipe_get_ms</code>, <a href="#a012">1</a><br />
+<code>nng_pipe_get_scheme</code>, <a href="#a017">1</a><br />
 <code>nng_pipe_get_size</code>, <a href="#a013">1</a><br />
 <code>nng_pipe_get_strcpy</code>, <a href="#a015">1</a><br />
 <code>nng_pipe_get_strdup</code>, <a href="#a016">1</a><br />
@@ -6388,7 +6917,7 @@ named pipes, <a href="#a004">1</a><br />
 <code>nng_pipe_id</code>, <a href="#a005">1</a><br />
 <code>NNG_PIPE_INITIALIZER</code>, <a href="#a004">1</a><br />
 <code>nng_pipe_listener</code>, <a href="#a008">1</a><br />
-<code>nng_pipe_notify</code>, <a href="#a017">1</a><br />
+<code>nng_pipe_notify</code>, <a href="#a018">1</a><br />
 <code>nng_pipe_peer_cert</code>, <a href="#a034">1</a><br />
 <code>nng_pipe_socket</code>, <a href="#a009">1</a><br />
 <code>nng_pub0_open</code>, <a href="#a013">1</a><br />
@@ -6409,6 +6938,15 @@ named pipes, <a href="#a004">1</a><br />
 <code>nng_send</code>, <a href="#a034">1</a><br />
 <code>nng_sendmsg</code>, <a href="#a035">1</a><br />
 <code>nng_sleep_aio</code>, <a href="#a011">1</a><br />
+<code>nng_sockaddr</code>, <a href="#a001">1</a><br />
+<code>nng_sockaddr_abstract</code>, <a href="#a004">1</a><br />
+<code>nng_sockaddr_equal</code>, <a href="#a009">1</a><br />
+<code>nng_sockaddr_hash</code>, <a href="#a010">1</a><br />
+<code>nng_sockaddr_in</code>, <a href="#a005">1</a><br />
+<code>nng_sockaddr_in6</code>, <a href="#a006">1</a><br />
+<code>nng_sockaddr_inproc</code>, <a href="#a002">1</a><br />
+<code>nng_sockaddr_ipc</code>, <a href="#a003">1</a><br />
+<code>nng_sockaddr_port</code>, <a href="#a008">1</a><br />
 <code>nng_socket</code>, <a href="#a002">1</a><br />
 <code>nng_socket_close</code>, <a href="#a033">1</a><br />
 <code>nng_socket_get_recv_poll_fd</code>, <a href="#a043">1</a><br />
@@ -6505,6 +7043,7 @@ named pipes, <a href="#a004">1</a><br />
 <code>nng_stream_stop</code>, <a href="#a006">1</a><br />
 <code>nng_strerror</code>, <a href="#a001">1</a><br />
 <code>nng_strfree</code>, <a href="#a006">1</a><br />
+<code>nng_str_sockaddr</code>, <a href="#a007">1</a><br />
 <code>nng_sub0_ctx_subscribe</code>, <a href="#a008">1</a><br />
 <code>nng_sub0_ctx_unsubscribe</code>, <a href="#a009">1</a><br />
 <code>nng_sub0_open</code>, <a href="#a019">1</a>, <a href="#a004">2</a><br />
@@ -6591,6 +7130,7 @@ publisher, <a href="#a003">1</a><br />
 <em>PUSH</em> protocol, <a href="#a001">1</a><br />
 random number, <a href="#a002">1</a><br />
 raw mode, <a href="#a021">1</a><br />
+reflector, <a href="#a003">1</a><br />
 <em>REP</em>, <a href="#a002">1</a><br />
 <em>REP</em> protocol, <a href="#a001">1</a><br />
 <em>REQ</em>, <a href="#a002">1</a><br />
@@ -6639,7 +7179,11 @@ UNIX domain sockets, <a href="#a003">1</a><br />
 URI, <a href="#a005">1</a><br />
 URL, <a href="#a002">1</a>, <a href="#a026">2</a><br />
 version number, <a href="#a006">1</a><br />
-voting, <a href="#a004">1</a><br /></p>
+voting, <a href="#a004">1</a><br />
+<em>WebSocket</em>, <a href="#a002">1</a><br />
+<em>WebSocket</em> transport, <a href="#a001">1</a><br />
+<code>ws://</code>, <a href="#a003">1</a><br />
+<code>wss://</code>, <a href="#a006">1</a><br /></p>
 
                     </main>
 

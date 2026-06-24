@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8131c6ff.js";
+            window.path_to_searchindex_js = "searchindex-7315db9f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-9d8f23fd.js"></script>
+        <script src="toc-f5500b13.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -201,22 +201,24 @@ condition variable, <a href="api/synch.html#a009">1</a><br />
 connection, <a href="api/pipe.html#a003">1</a><br />
 context, <a href="api/ctx.html#a001">1</a><br />
 CPU-bound, <a href="api/thread.html#a003">1</a><br />
+device, <a href="api/device.html#a001">1</a><br />
 duration, <a href="api/time.html#a003">1</a><br />
 error message, <a href="api/errors.html#a002">1</a><br />
 event loop, <a href="api/sock.html#a042">1</a><br />
 flow control, <a href="proto/index.html#a006">1</a><br />
+forwarder, <a href="api/device.html#a002">1</a><br />
 gather, <a href="api/aio.html#a024">1</a><br />
 <code>getopt</code>, <a href="api/args.html#a003">1</a><br />
 half-duplex, <a href="proto/index.html#a004">1</a><br />
 header, <a href="api/msg.html#a003">1</a><br />
-hostname, <a href="tran/tcp.html#a005">1</a>, <a href="tran/tls.html#a008">2</a><br />
+hostname, <a href="tran/tcp.html#a005">1</a>, <a href="tran/tls.html#a008">2</a>, <a href="tran/websocket.html#a005">3</a><br />
 idempotent, <a href="proto/req.html#a004">1</a><br />
 <code>INADDR_ANY</code>, <a href="tran/udp.html#a007">1</a><br />
 <em>inproc</em>, <a href="tran/inproc.html#a002">1</a><br />
 <em>inproc</em> transport, <a href="tran/inproc.html#a001">1</a><br />
 <code>inproc://</code>, <a href="tran/inproc.html#a004">1</a><br />
 intra-process, <a href="tran/inproc.html#a003">1</a><br />
-IP address, <a href="tran/tcp.html#a004">1</a>, <a href="tran/tls.html#a007">2</a><br />
+IP address, <a href="tran/tcp.html#a004">1</a>, <a href="tran/tls.html#a007">2</a>, <a href="tran/websocket.html#a004">3</a><br />
 <em>ipc</em>, <a href="tran/ipc.html#a002">1</a><br />
 <em>ipc</em> transport, <a href="tran/ipc.html#a001">1</a><br />
 <code>ipc://</code>, <a href="tran/ipc.html#a005">1</a><br />
@@ -232,7 +234,7 @@ mTLS, <a href="api/tls.html#a030">1</a><br />
 MTU, <a href="tran/udp.html#a008">1</a><br />
 mutex, <a href="api/synch.html#a002">1</a><br />
 mutual TLS, <a href="api/tls.html#a029">1</a><br />
-Nagle’s algorithm, <a href="tran/tcp.html#a006">1</a>, <a href="tran/tls.html#a009">2</a><br />
+Nagle’s algorithm, <a href="tran/tcp.html#a006">1</a>, <a href="tran/tls.html#a009">2</a>, <a href="tran/websocket.html#a007">3</a><br />
 named pipes, <a href="tran/ipc.html#a004">1</a><br />
 <code>NNG_AF_UNSPEC</code>, <a href="tran/socket.html#a004">1</a><br />
 <code>nng_aio</code>, <a href="api/aio.html#a001">1</a><br />
@@ -275,6 +277,8 @@ named pipes, <a href="tran/ipc.html#a004">1</a><br />
 <code>nng_cv_wait</code>, <a href="api/synch.html#a013">1</a><br />
 <code>nng_cv_wake</code>, <a href="api/synch.html#a014">1</a><br />
 <code>nng_cv_wake1</code>, <a href="api/synch.html#a015">1</a><br />
+<code>nng_device</code>, <a href="api/device.html#a004">1</a>, <a href="api/device.html#a006">2</a>, <a href="api/device.html#a008">3</a><br />
+<code>nng_device_aio</code>, <a href="api/device.html#a005">1</a>, <a href="api/device.html#a007">2</a>, <a href="api/device.html#a009">3</a><br />
 <code>nng_dialer_get_tls</code>, <a href="api/tls.html#a025">1</a><br />
 <code>nng_dialer_set_tls</code>, <a href="api/tls.html#a026">1</a><br />
 <code>nng_duration</code>, <a href="api/time.html#a002">1</a><br />
@@ -401,12 +405,13 @@ named pipes, <a href="tran/ipc.html#a004">1</a><br />
 <code>nng_pipe</code>, <a href="api/pipe.html#a001">1</a><br />
 <code>nng_pipe_close</code>, <a href="api/pipe.html#a006">1</a><br />
 <code>nng_pipe_dialer</code>, <a href="api/pipe.html#a007">1</a><br />
-<code>NNG_PIPE_EV_ADD_POST</code>, <a href="api/pipe.html#a019">1</a><br />
-<code>NNG_PIPE_EV_ADD_PRE</code>, <a href="api/pipe.html#a018">1</a><br />
-<code>NNG_PIPE_EV_REM_POST</code>, <a href="api/pipe.html#a020">1</a><br />
+<code>NNG_PIPE_EV_ADD_POST</code>, <a href="api/pipe.html#a020">1</a><br />
+<code>NNG_PIPE_EV_ADD_PRE</code>, <a href="api/pipe.html#a019">1</a><br />
+<code>NNG_PIPE_EV_REM_POST</code>, <a href="api/pipe.html#a021">1</a><br />
 <code>nng_pipe_get_bool</code>, <a href="api/pipe.html#a010">1</a><br />
 <code>nng_pipe_get_int</code>, <a href="api/pipe.html#a011">1</a><br />
 <code>nng_pipe_get_ms</code>, <a href="api/pipe.html#a012">1</a><br />
+<code>nng_pipe_get_scheme</code>, <a href="api/pipe.html#a017">1</a><br />
 <code>nng_pipe_get_size</code>, <a href="api/pipe.html#a013">1</a><br />
 <code>nng_pipe_get_strcpy</code>, <a href="api/pipe.html#a015">1</a><br />
 <code>nng_pipe_get_strdup</code>, <a href="api/pipe.html#a016">1</a><br />
@@ -414,7 +419,7 @@ named pipes, <a href="tran/ipc.html#a004">1</a><br />
 <code>nng_pipe_id</code>, <a href="api/pipe.html#a005">1</a><br />
 <code>NNG_PIPE_INITIALIZER</code>, <a href="api/pipe.html#a004">1</a><br />
 <code>nng_pipe_listener</code>, <a href="api/pipe.html#a008">1</a><br />
-<code>nng_pipe_notify</code>, <a href="api/pipe.html#a017">1</a><br />
+<code>nng_pipe_notify</code>, <a href="api/pipe.html#a018">1</a><br />
 <code>nng_pipe_peer_cert</code>, <a href="api/tls.html#a034">1</a><br />
 <code>nng_pipe_socket</code>, <a href="api/pipe.html#a009">1</a><br />
 <code>nng_pub0_open</code>, <a href="api/sock.html#a013">1</a><br />
@@ -435,6 +440,15 @@ named pipes, <a href="tran/ipc.html#a004">1</a><br />
 <code>nng_send</code>, <a href="api/sock.html#a034">1</a><br />
 <code>nng_sendmsg</code>, <a href="api/sock.html#a035">1</a><br />
 <code>nng_sleep_aio</code>, <a href="api/time.html#a011">1</a><br />
+<code>nng_sockaddr</code>, <a href="api/sockaddr.html#a001">1</a><br />
+<code>nng_sockaddr_abstract</code>, <a href="api/sockaddr.html#a004">1</a><br />
+<code>nng_sockaddr_equal</code>, <a href="api/sockaddr.html#a009">1</a><br />
+<code>nng_sockaddr_hash</code>, <a href="api/sockaddr.html#a010">1</a><br />
+<code>nng_sockaddr_in</code>, <a href="api/sockaddr.html#a005">1</a><br />
+<code>nng_sockaddr_in6</code>, <a href="api/sockaddr.html#a006">1</a><br />
+<code>nng_sockaddr_inproc</code>, <a href="api/sockaddr.html#a002">1</a><br />
+<code>nng_sockaddr_ipc</code>, <a href="api/sockaddr.html#a003">1</a><br />
+<code>nng_sockaddr_port</code>, <a href="api/sockaddr.html#a008">1</a><br />
 <code>nng_socket</code>, <a href="api/sock.html#a002">1</a><br />
 <code>nng_socket_close</code>, <a href="api/sock.html#a033">1</a><br />
 <code>nng_socket_get_recv_poll_fd</code>, <a href="api/sock.html#a043">1</a><br />
@@ -531,6 +545,7 @@ named pipes, <a href="tran/ipc.html#a004">1</a><br />
 <code>nng_stream_stop</code>, <a href="api/stream.html#a006">1</a><br />
 <code>nng_strerror</code>, <a href="api/errors.html#a001">1</a><br />
 <code>nng_strfree</code>, <a href="api/memory.html#a006">1</a><br />
+<code>nng_str_sockaddr</code>, <a href="api/sockaddr.html#a007">1</a><br />
 <code>nng_sub0_ctx_subscribe</code>, <a href="proto/sub.html#a008">1</a><br />
 <code>nng_sub0_ctx_unsubscribe</code>, <a href="proto/sub.html#a009">1</a><br />
 <code>nng_sub0_open</code>, <a href="api/sock.html#a019">1</a>, <a href="proto/sub.html#a004">2</a><br />
@@ -617,6 +632,7 @@ publisher, <a href="proto/pub.html#a003">1</a><br />
 <em>PUSH</em> protocol, <a href="proto/push.html#a001">1</a><br />
 random number, <a href="api/misc.html#a002">1</a><br />
 raw mode, <a href="api/sock.html#a021">1</a><br />
+reflector, <a href="api/device.html#a003">1</a><br />
 <em>REP</em>, <a href="proto/rep.html#a002">1</a><br />
 <em>REP</em> protocol, <a href="proto/rep.html#a001">1</a><br />
 <em>REQ</em>, <a href="proto/req.html#a002">1</a><br />
@@ -665,7 +681,11 @@ UNIX domain sockets, <a href="tran/ipc.html#a003">1</a><br />
 URI, <a href="api/http.html#a005">1</a><br />
 URL, <a href="api/url.html#a002">1</a>, <a href="api/stream.html#a026">2</a><br />
 version number, <a href="api/misc.html#a006">1</a><br />
-voting, <a href="proto/surveyor.html#a004">1</a><br /></p>
+voting, <a href="proto/surveyor.html#a004">1</a><br />
+<em>WebSocket</em>, <a href="tran/websocket.html#a002">1</a><br />
+<em>WebSocket</em> transport, <a href="tran/websocket.html#a001">1</a><br />
+<code>ws://</code>, <a href="tran/websocket.html#a003">1</a><br />
+<code>wss://</code>, <a href="tran/websocket.html#a006">1</a><br /></p>
 
                     </main>
 
