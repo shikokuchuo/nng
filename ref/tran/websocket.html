@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>WebSocket Transport - NNG Reference Manual (DRAFT)</title>
+        <title>WebSocket Transport - NNG Reference Manual</title>
 
 
         <!-- Custom HTML head -->
@@ -28,6 +28,8 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/nng-site-header-b8c364e5.css">
+        <link rel="stylesheet" href="../theme/nng-print-102c8bb7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -35,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-7315db9f.js";
+            window.path_to_searchindex_js = "../searchindex-d6616512.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f5500b13.js"></script>
+        <script src="../toc-c99ee17e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +139,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">NNG Reference Manual (DRAFT)</h1>
+                    <h1 class="menu-title">NNG Reference Manual</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -264,7 +266,7 @@ The transport sets the WebSocket subprotocol during the handshake.
 For example, a REQ socket advertises the peer protocol name expected by the
 matching REP peer.</p>
 <p>Applications can configure WebSocket headers, frame sizes, TCP options, and
-TLS options on the usual <a href="../TODO.html">dialer</a> and <a href="../TODO.html">listener</a> objects before they are
+TLS options on the usual <a href="../api/endpoint.html">dialer</a> and <a href="../api/endpoint.html">listener</a> objects before they are
 started.
 After a connection is established, HTTP handshake headers and the request URI
 can be inspected from the <a href="../api/pipe.html">pipe</a>.</p>
@@ -319,6 +321,7 @@ listener, stream dialer, or stream listener is started.</p>
 <tr><td><code>NNG_OPT_WS_HEADER</code><a name="NNG_OPT_WS_HEADER"></a></td><td><code>string</code></td><td>Option prefix for HTTP headers. Append the header name to set a handshake header on a dialer or listener, or to retrieve a received header from a connected pipe or stream. For example, <code>NNG_OPT_WS_HEADER "X-Trace-ID"</code> refers to the <code>X-Trace-ID</code> header.</td></tr>
 <tr><td><code>NNG_OPT_WS_PROTOCOL</code><a name="NNG_OPT_WS_PROTOCOL"></a></td><td><code>string</code></td><td>WebSocket subprotocol, corresponding to the <code>Sec-WebSocket-Protocol</code> header. Scalability Protocol sockets configure this automatically.</td></tr>
 <tr><td><code>NNG_OPT_WS_REQUEST_URI</code><a name="NNG_OPT_WS_REQUEST_URI"></a></td><td><code>string</code></td><td>Read-only request URI sent by the client, available from connected pipes and streams. This is useful for listeners that handle a subtree.</td></tr>
+<tr><td><code>NNG_OPT_WS_TREE</code><a name="NNG_OPT_WS_TREE"></a></td><td><code>bool</code></td><td>Listener-only. When true, accept requests for child paths of the listener URL; the longest matching tree listener handles a request. Set before starting the listener.</td></tr>
 <tr><td><code>NNG_OPT_WS_SENDMAXFRAME</code><a name="NNG_OPT_WS_SENDMAXFRAME"></a></td><td><code>size</code></td><td>Maximum WebSocket frame size to send before fragmenting. The default is 64 KiB. Larger values can improve throughput but may increase latency and peer buffering requirements. There is no WebSocket negotiation for this value.</td></tr>
 <tr><td><code>NNG_OPT_WS_RECVMAXFRAME</code><a name="NNG_OPT_WS_RECVMAXFRAME"></a></td><td><code>size</code></td><td>Maximum WebSocket frame size accepted from the peer. Frames larger than this are rejected. This should not normally be larger than <a href="../api/sock.html#NNG_OPT_RECVMAXSZ"><code>NNG_OPT_RECVMAXSZ</code></a>.</td></tr>
 <tr><td><code>NNG_OPT_WS_HEADER_RESET</code><a name="NNG_OPT_WS_HEADER_RESET"></a></td><td><code>bool</code></td><td>Read-only option for connected pipes and streams. Reading it resets HTTP header iteration to the beginning.</td></tr>
@@ -356,7 +359,7 @@ For richer peer certificate information, use <a href="../api/tls.html#peer-certi
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../tran/tls.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../tran/dtls.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -370,7 +373,7 @@ For richer peer certificate information, use <a href="../api/tls.html#peer-certi
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../tran/tls.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../tran/dtls.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
@@ -403,6 +406,7 @@ For richer peer certificate information, use <a href="../api/tls.html#peer-certi
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="../theme/nng-site-header-834b0e1d.js"></script>
 
 
 

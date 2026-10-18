@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Time - NNG Reference Manual (DRAFT)</title>
+        <title>Time - NNG Reference Manual</title>
 
 
         <!-- Custom HTML head -->
@@ -28,6 +28,8 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/nng-site-header-b8c364e5.css">
+        <link rel="stylesheet" href="../theme/nng-print-102c8bb7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -35,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-7315db9f.js";
+            window.path_to_searchindex_js = "../searchindex-d6616512.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f5500b13.js"></script>
+        <script src="../toc-c99ee17e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +139,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">NNG Reference Manual (DRAFT)</h1>
+                    <h1 class="menu-title">NNG Reference Manual</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -175,8 +177,8 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="time"><a class="header" href="#time">Time</a></h1>
-<p><em>NNG</em> supports has support for time in the form of access to a
-system clock, and supporting timeouts for certain operations.</p>
+<p><em>NNG</em> supports obtaining a timestamp derived from the system clock,
+and using timeouts for certain operations based on the same clock.</p>
 <h2 id="time-type"><a class="header" href="#time-type">Time Type</a></h2>
 <pre><code class="language-c">typedef uint64_t nng_time;
 </code></pre>
@@ -208,8 +210,7 @@ and this value means that the previously established default should be used.
 The precise meaning is context-specific.</p>
 </li>
 <li>
-<p><a name="a006"></a><code>NNG_DURATION_ZERO</code>: A zero length duration is used to performan an immediate
-poll.</p>
+<p><a name="a006"></a><code>NNG_DURATION_ZERO</code>: A zero-length duration is used to poll immediately.</p>
 </li>
 </ul>
 <h2 id="get-the-current-time"><a class="header" href="#get-the-current-time">Get the Current Time</a></h2>
@@ -312,6 +313,7 @@ then the sleep will wake up early, with a result code of <a href="../api/errors.
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="../theme/nng-site-header-834b0e1d.js"></script>
 
 
 

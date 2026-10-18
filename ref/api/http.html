@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>HTTP - NNG Reference Manual (DRAFT)</title>
+        <title>HTTP - NNG Reference Manual</title>
 
 
         <!-- Custom HTML head -->
@@ -28,6 +28,8 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/nng-site-header-b8c364e5.css">
+        <link rel="stylesheet" href="../theme/nng-print-102c8bb7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -35,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-7315db9f.js";
+            window.path_to_searchindex_js = "../searchindex-d6616512.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f5500b13.js"></script>
+        <script src="../toc-c99ee17e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +139,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">NNG Reference Manual (DRAFT)</h1>
+                    <h1 class="menu-title">NNG Reference Manual</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -177,7 +179,7 @@
                         <h1 id="http-support"><a class="header" href="#http-support">HTTP Support</a></h1>
 <p>NNG offers support for creation of HTTP clients, and servers. NNG supports HTTP/1.1 at present, and supports
 a subset of functionality, but the support should be sufficient for simple clients, REST API servers, static content servers,
-and gateways between HTTP and and other protocols. It also provides support for WebSocket based connections.</p>
+and gateways between HTTP and other protocols. It also provides support for WebSocket based connections.</p>
 <p>HTTP follows a request/reply model, where a client issues a request, and the server is expected to reply.
 Every request is answered with a single reply.</p>
 <h2 id="header-file"><a class="header" href="#header-file">Header File</a></h2>
@@ -185,8 +187,33 @@ Every request is answered with a single reply.</p>
 </code></pre>
 <p>Unlike the rest of NNG, the HTTP API in NNG requires including <code>nng/http.h</code>. It is not necessary to include
 the main <code>nng/nng.h</code> header, it will be included transitively by <code>nng/http.h</code>.</p>
+<h2 id="http-over-unix-domain-sockets"><a class="header" href="#http-over-unix-domain-sockets">HTTP over Unix-domain sockets</a></h2>
+<p>HTTP clients and servers can use a Unix-domain socket with an
+<code>http+unix://%2Fabsolute%2Fsocket-path</code> URL. The authority (the portion after
+<code>//</code> and before the next <code>/</code>) contains the percent-encoded socket path; it is
+not an HTTP hostname. For example, the AF_UNIX socket path
+<code>/var/run/service.sock</code> is written as:</p>
+<pre><code class="language-text">http+unix://%2Fvar%2Frun%2Fservice.sock
+</code></pre>
+<p>The triple-slash form <code>http+unix:///var/run/service.sock</code> cannot be used to
+create an HTTP client or server: it has an empty authority and treats
+<code>/var/run/service.sock</code> as an HTTP URL path rather than a socket path. Port
+numbers are not valid in <code>http+unix</code> URLs.</p>
+<p>NNG uses only the encoded authority to choose the socket. For an HTTP client,
+the URL path and query initialize the HTTP request target; callers can replace
+it with <a href="../api/http.html#http-uri"><code>nng_http_set_uri</code></a>, such as <code>/v1/status</code>. A URL fragment is retained
+by the URL API but, like HTTP over TCP, is not sent to the server. URL userinfo
+does not affect the Unix socket endpoint; applications that need authentication
+set the appropriate HTTP headers.</p>
+<p>NNG recognizes this URL on every platform, but it requires the <code>unix</code> stream
+driver. NNG provides that driver on POSIX platforms and on Windows systems with
+AF_UNIX support. On builds without it, HTTP client or server allocation returns
+<a href="../api/errors.html#NNG_ENOTSUP"><code>NNG_ENOTSUP</code></a>.</p>
+<p>Because this URL uses its hostname for the socket path, HTTP clients send
+<code>Host: localhost</code> by default. Applications that use virtual-host routing can
+replace it with <a href="../api/http.html#modifying-headers"><code>nng_http_set_header</code></a>.</p>
 <h2 id="connection-object"><a class="header" href="#connection-object">Connection Object</a></h2>
-<pre><code class="language-c">typedef struct nng_http nng_http;
+<pre><code class="language-c">typedef struct nng_http_conn nng_http;
 </code></pre>
 <p>The <a name="a001"></a><code>nng_http</code> object represents a single logical HTTP connection to the server.
 For HTTP/1.1 and earlier, this will correspond to a single TCP connection, but the object
@@ -216,13 +243,13 @@ const char *nng_http_get_uri(nng_http *conn);
 <p>The <a name="a004"></a><code>nng_http_set_uri</code> function sets the <a name="a005"></a>URI, which normally appears like a path such as “/docs/index.html”,
 for the next transaction on <em>conn</em>. It sets the URI to <em>uri</em>, and, if <em>query</em> is not <code>NULL</code>, also appends the
 contents of <em>query</em>, separated by either the ‘?’ or ‘&amp;’ character, depending on whether <em>uri</em> already
-contains a query string. It may return <a href="../api/errors.html#NNG_ENOMEM"><code>NNG_ENOMEM</code></a>, or <a href="../api/errors.html#NNG_EMSGSIZE"><code>NNG_EMSGSIZE</code></a> if the the result is too long,
+contains a query string. It may return <a href="../api/errors.html#NNG_ENOMEM"><code>NNG_ENOMEM</code></a>, or <a href="../api/errors.html#NNG_EMSGSIZE"><code>NNG_EMSGSIZE</code></a> if the result is too long,
 or <a href="../api/errors.html#NNG_EINVAL"><code>NNG_EINVAL</code></a> if there is some other problem with the URI.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
 <p>The <em>uri</em> and <em>query</em> must be already percent-encoded if necessary.</p>
 </blockquote>
-<p>The <a name="a006"></a><code>nni_http_get_uri</code> function is used to obtain the URI that was previously set by <code>nng_http_set_uri</code>.
+<p>The <a name="a006"></a><code>nng_http_get_uri</code> function is used to obtain the URI that was previously set by <code>nng_http_set_uri</code>.
 If the URI is unset (such as for a freshly created connection), then it returns <code>NULL</code>. The returned value
 will have any query concatenated, for example “/api/get_user.cgi?name=garrett”.</p>
 <h3 id="http-version"><a class="header" href="#http-version">HTTP Version</a></h3>
@@ -247,10 +274,10 @@ It might be easiest to just fail any request coming in that is not HTTP/1.1.</p>
 <h3 id="http-status"><a class="header" href="#http-status">HTTP Status</a></h3>
 <pre><code class="language-c">typedef enum ... nng_http_status;
 nng_http_status nng_http_get_status(nng_http *conn);
-const char *nng_http_get_reason(nng_http_conn *conn);
+const char *nng_http_get_reason(nng_http *conn);
 void nng_http_set_status(nng_http *conn, nng_http_status status, const char *reason);
 </code></pre>
-<p>The <a name="a009"></a><code>nng_http_get_status</code> function obtains the numeric code (typipcally numbered from 100 through 599) returned
+<p>The <a name="a009"></a><code>nng_http_get_status</code> function obtains the numeric code (typically numbered from 100 through 599) returned
 by the server in the last exchange on <em>conn</em>. (If no exchange has been performed yet, the result is undefined.)
 The value is returned as an <a name="a010"></a><code>nng_http_status</code>.</p>
 <p>A descriptive message matching the status code is returned by <a name="a011"></a><code>nng_http_get_reason</code>.</p>
@@ -259,9 +286,9 @@ reported to the client to <em>status</em>, and the associated text (reason) to <
 then a built in reason based on the <em>status</em> will be used instead.</p>
 <blockquote class="blockquote-tag blockquote-tag-tip">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
-<p>Callbacks used on the server may wish to use <a href="../TODO.html"><code>nng_http_server_set_error</code></a> or <a href="../TODO.html"><code>nng_http_server_set_redirect</code></a> instead of
-<code>nng_http_set_status</code>, because those functions will also set the response body to a suitable HTML document
-for display to users.</p>
+<p>Callbacks used on the server may wish to call <a href="../api/http.html#applying-a-custom-error-page"><code>nng_http_server_error</code></a> after
+setting an error status with <code>nng_http_set_status</code>, because that will also
+attach any custom error page configured on the server for display to users.</p>
 </blockquote>
 <p>Status codes are defined by the IETF. Here are definitions that NNG provides for convenience:</p>
 <div class="table-wrapper">
@@ -278,8 +305,8 @@ for display to users.</p>
 <tr><td><code>NNG_HTTP_STATUS_ACCEPTED</code><a name="NNG_HTTP_STATUS_ACCEPTED"></a></td><td>202</td><td>Created</td><td>Request accepted for future processing.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_NOT_AUTHORITATIVE</code><a name="NNG_HTTP_STATUS_NOT_AUTHORITATIVE"></a></td><td>203</td><td>Not Authoritative</td><td>Request successful, but modified by proxy.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_NO_CONTENT</code><a name="NNG_HTTP_STATUS_NO_CONTENT"></a></td><td>204</td><td>No Content</td><td>Request successful, no content returned.</td></tr>
-<tr><td><code>NNG_HTTP_STATUS_RESET_CONTENT</code><a name="NNG_HTTP_STATUS_NO_CONTENT"></a></td><td>205</td><td>Reset Content</td><td>Request successful, client should reload content.</td></tr>
-<tr><td><code>NNG_HTTP_STATUS_PARTIAL_CONTENT</code><a name="NNG_HTTP_STATUS_NO_CONTENT"></a></td><td>206</td><td>Partial Content</td><td>Response to a range request.</td></tr>
+<tr><td><code>NNG_HTTP_STATUS_RESET_CONTENT</code><a name="NNG_HTTP_STATUS_RESET_CONTENT"></a></td><td>205</td><td>Reset Content</td><td>Request successful, client should reload content.</td></tr>
+<tr><td><code>NNG_HTTP_STATUS_PARTIAL_CONTENT</code><a name="NNG_HTTP_STATUS_PARTIAL_CONTENT"></a></td><td>206</td><td>Partial Content</td><td>Response to a range request.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_MULTI_STATUS</code><a name="NNG_HTTP_STATUS_MULTI_STATUS"></a></td><td>207</td><td>Multi-Status</td><td>Used with WebDAV.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_ALREADY_REPORTED</code><a name="NNG_HTTP_STATUS_ALREADY_REPORTED"></a></td><td>208</td><td>Already Reported</td><td>Used with WebDAV.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_IM_USED</code><a name="NNG_HTTP_STATUS_IM_USED"></a></td><td>226</td><td>IM Used</td><td>Used with delta encodings, rarely supported.</td></tr>
@@ -297,14 +324,14 @@ for display to users.</p>
 <tr><td><code>NNG_HTTP_STATUS_FORBIDDEN</code><a name="NNG_HTTP_STATUS_FORBIDDEN"></a></td><td>403</td><td>Forbidden</td><td>No permission to access resource.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_NOT_FOUND</code><a name="NNG_HTTP_STATUS_NOT_FOUND"></a></td><td>404</td><td>Not Found</td><td>Resource does not exist.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_METHOD_NOT_ALLOWED</code><a name="NNG_HTTP_STATUS_METHOD_NOT_ALLOWED"></a></td><td>405</td><td>Method Not Allowed</td><td>Resource does not support the method.</td></tr>
-<tr><td><code>NNG_HTTP_STATUS_METHOD_NOT_ACCEPTABLE</code><a name="NNG_HTTP_STATUS_METHOD_NOT_ACCEPTABLE"></a></td><td>406</td><td>Not Acceptable</td><td>Could not satisfy accept requirements.</td></tr>
+<tr><td><code>NNG_HTTP_STATUS_NOT_ACCEPTABLE</code><a name="NNG_HTTP_STATUS_NOT_ACCEPTABLE"></a></td><td>406</td><td>Not Acceptable</td><td>Could not satisfy accept requirements.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_PROXY_AUTH_REQUIRED</code><a name="NNG_HTTP_STATUS_PROXY_AUTH_REQUIRED"></a></td><td>407</td><td>Proxy Authentication Required</td><td>Proxy requires authentication.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_REQUEST_TIMEOUT</code><a name="NNG_HTTP_STATUS_REQUEST_TIMEOUT"></a></td><td>408</td><td>Request Timeout</td><td>Timed out waiting for request.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_CONFLICT</code><a name="NNG_HTTP_STATUS_CONFLICT"></a></td><td>409</td><td>Conflict</td><td>Conflicting request.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_GONE</code><a name="NNG_HTTP_STATUS_GONE"></a></td><td>410</td><td>Gone</td><td>Resource no longer exists.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_LENGTH_REQUIRED</code><a name="NNG_HTTP_STATUS_LENGTH_REQUIRED"></a></td><td>411</td><td>Length Required</td><td>Missing Content-Length.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_PRECONDITION_FAILED</code><a name="NNG_HTTP_STATUS_PRECONDITION_FAILED"></a></td><td>412</td><td>Precondition Failed</td><td></td></tr>
-<tr><td><code>NNG_HTTP_STATUS_CONTENT_TOO_LARGE</code><a name="NNG_HTTP_STATUS_PAYLOAD_TOO_LARGE"></a></td><td>413</td><td>Content Too Large</td><td></td></tr>
+<tr><td><code>NNG_HTTP_STATUS_CONTENT_TOO_LARGE</code><a name="NNG_HTTP_STATUS_CONTENT_TOO_LARGE"></a></td><td>413</td><td>Content Too Large</td><td></td></tr>
 <tr><td><code>NNG_HTTP_STATUS_URI_TOO_LONG</code><a name="NNG_HTTP_STATUS_URI_TOO_LONG"></a></td><td>414</td><td>URI Too Long</td><td></td></tr>
 <tr><td><code>NNG_HTTP_STATUS_UNSUPPORTED_MEDIA_TYPE</code><a name="NNG_HTTP_STATUS_UNSUPPORTED_MEDIA_TYPE"></a></td><td>415</td><td>Unsupported Media Type</td><td></td></tr>
 <tr><td><code>NNG_HTTP_STATUS_RANGE_NOT_SATISFIABLE</code><a name="NNG_HTTP_STATUS_RANGE_NOT_SATISFIABLE"></a></td><td>416</td><td>Range Not Satisfiable</td><td></td></tr>
@@ -322,8 +349,8 @@ for display to users.</p>
 <tr><td><code>NNG_HTTP_STATUS_INTERNAL_SERVER_ERROR</code><a name="NNG_HTTP_STATUS_INTERNAL_SERVER_ERROR"></a></td><td>500</td><td>Internal Server Error</td><td></td></tr>
 <tr><td><code>NNG_HTTP_STATUS_NOT_IMPLEMENTED</code><a name="NNG_HTTP_STATUS_NOT_IMPLEMENTED"></a></td><td>501</td><td>Not Implemented</td><td>Server does not implement method.</td></tr>
 <tr><td><code>NNG_HTTP_STATUS_BAD_GATEWAY</code><a name="NNG_HTTP_STATUS_BAD_GATEWAY"></a></td><td>502</td><td>Bad Gateway</td><td></td></tr>
-<tr><td><code>NNG_HTTP_STATUS_SERVICE_UNAVAILALE</code><a name="NNG_HTTP_STATUS_SERVICE_UNAVAILABLE"></a></td><td>503</td><td>Service Unavailable</td><td></td></tr>
-<tr><td><code>NNG_HTTP_STATUS_GATEWAY_TIMEOUT</code><a name="NNG_HTTP_STATUS_GATEWAY_TIMEOUT"></a></td><td>504</td><td>Gateway TImeout</td><td></td></tr>
+<tr><td><code>NNG_HTTP_STATUS_SERVICE_UNAVAILABLE</code><a name="NNG_HTTP_STATUS_SERVICE_UNAVAILABLE"></a></td><td>503</td><td>Service Unavailable</td><td></td></tr>
+<tr><td><code>NNG_HTTP_STATUS_GATEWAY_TIMEOUT</code><a name="NNG_HTTP_STATUS_GATEWAY_TIMEOUT"></a></td><td>504</td><td>Gateway Timeout</td><td></td></tr>
 <tr><td><code>NNG_HTTP_STATUS_HTTP_VERSION_NOT_SUPP</code><a name="NNG_HTTP_STATUS_HTTP_VERSION_NOT_SUPP"></a></td><td>505</td><td>HTTP Version Not Supported</td><td></td></tr>
 <tr><td><code>NNG_HTTP_STATUS_VARIANT_ALSO_NEGOTIATES</code><a name="NNG_HTTP_STATUS_VARIANT_ALSO_NEGOTIATES"></a></td><td>506</td><td>Variant Also Negotiates</td><td></td></tr>
 <tr><td><code>NNG_HTTP_STATUS_INSUFFICIENT_STORAGE</code><a name="NNG_HTTP_STATUS_INSUFFICIENT_STORAGE"></a></td><td>507</td><td>Variant Also Negotiates</td><td></td></tr>
@@ -339,7 +366,7 @@ bool nng_http_next_header(nng_http *conn, const char **keyp, const char **valuep
 </code></pre>
 <p>The <a name="a013"></a><code>nng_http_get_header</code> returns the header value matching <em>key</em> that was received over <em>conn</em>,
 or <code>NULL</code> if no such header exists.</p>
-<p>Thus, if <em>conn</em> is a client connection, then this function returns the the header value
+<p>Thus, if <em>conn</em> is a client connection, then this function returns the header value
 sent by the server as part of a response, whereas if it is a server connection, it returns
 the header value sent by the client as part of the request.</p>
 <p>If multiple headers are present with the same key, they may be returned as a combined value,
@@ -349,18 +376,18 @@ that <code>nng_http_get_header</code> uses. To start, it is called with <em>next
 If a header was found, then it returns <code>true</code>, and sets <em>keyp</em> and <em>valuep</em> to values containing
 the header name and value. It also updates <em>next</em>, which should be used for the next iteration.</p>
 <p>Once <code>nng_http_next_header</code> returns <code>false</code>, further calls with the same parameters will continue to do so.
-The scan can be rest by setting <em>next</em> to <code>NULL</code>.</p>
+The scan can be reset by setting <em>next</em> to <code>NULL</code>.</p>
 <h3 id="modifying-headers"><a class="header" href="#modifying-headers">Modifying Headers</a></h3>
 <pre><code class="language-c">nng_err nng_http_add_header(nng_http *conn, const char *key, const char *val);
 nng_err nng_http_set_header(nng_http *conn, const char *key, const char *val);
 void nng_http_del_header(nng_http *conn, const char *key);
 </code></pre>
 <p>The <a name="a015"></a><code>nng_http_add_header</code>, <a name="a016"></a><code>nng_http_set_header</code>, and <a name="a017"></a><code>nng_http_del_header</code> functions are
-used to add a modify either the request or response headers for <em>conn</em> prior to sending to the connected peer on <em>conn</em>.</p>
+used to add or modify either the request or response headers for <em>conn</em> prior to sending to the connected peer on <em>conn</em>.</p>
 <p>Thus, if the <em>conn</em> is a client connection created by <a href="../api/http.html#creating-connections"><code>nng_http_client_connect</code></a>, then the request headers are modified.
 Conversely, if it is a connection created by an HTTP server and used in a callback function, then the response headers are modified.</p>
 <p>The <code>nng_http_add_header</code> function adds a header with the name <em>key</em>, and the value <em>val</em>, to the list of headers.
-In so doing, it may bring collapse multiple headers with the same name into a comma separated list, following
+In so doing, it may collapse multiple headers with the same name into a comma-separated list, following
 the syntax specified in RFC 9110. The function may return <a href="../api/errors.html#NNG_ENOMEM"><code>NNG_ENOMEM</code></a>, <a href="../api/errors.html#NNG_EMSGSIZE"><code>NNG_EMSGSIZE</code></a>, or <a href="../api/errors.html#NNG_EINVAL"><code>NNG_EINVAL</code></a>.</p>
 <p>The <code>nng_http_set_header</code> function adds the header if it does not already exist, but replaces any and all previously existing
 headers with the same name <em>key</em>, if they exist. In all other respects it behaves similarly to <code>nng_http_add_header</code>.</p>
@@ -369,18 +396,18 @@ headers with the same name <em>key</em>, if they exist. In all other respects it
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
 <p>Some HTTP headers have special semantics, such as the “Host”, “Content-Length”, and “Content-Type” headers.
 This implementation may apply those semantics, in order to conform to the specifications for HTTP, such
-as by guaranting that only a single instance of one of these headers is present.</p>
+as by guaranteeing that only a single instance of one of these headers is present.</p>
 </blockquote>
 <h3 id="retrieving-body-content"><a class="header" href="#retrieving-body-content">Retrieving Body Content</a></h3>
-<pre><code class="language-c">void nng_http_get_body(nng_http_conn *conn, void **datap, size_t *sizep);
+<pre><code class="language-c">void nng_http_get_body(nng_http *conn, void **datap, size_t *sizep);
 </code></pre>
-<p>The <a name="a018"></a><code>nng_http_get_data</code> obtains the most recently received request or
+<p>The <a name="a018"></a><code>nng_http_get_body</code> function obtains the most recently received request or
 response body. This will be <code>NULL</code> if the content has not been retrieved
-properly yet, or if the peer did not any content. (Some requests are defined
+properly yet, or if the peer did not send any content. (Some requests are defined
 to never have body content, such as “HEAD”.)</p>
 <h3 id="storing-body-content"><a class="header" href="#storing-body-content">Storing Body Content</a></h3>
-<pre><code class="language-c">void nng_http_set_body(nng_http_conn *conn, void *data, size_t size);
-void nng_http_copy_body(nng_http_conn *conn, const void *data, size_t size);
+<pre><code class="language-c">void nng_http_set_body(nng_http *conn, void *data, size_t size);
+nng_err nng_http_copy_body(nng_http *conn, const void *data, size_t size);
 </code></pre>
 <p>The <a name="a019"></a><code>nng_http_set_body</code> function sets the outgoing body content to <em>data</em>,
 which must be <em>size</em> bytes long. The caller must ensure that <em>data</em> remains
@@ -404,13 +431,13 @@ transfer-encoding.</p>
 <pre><code class="language-c">void nng_http_close(nng_http *conn);
 </code></pre>
 <p>The <a name="a021"></a><code>nng_http_close</code> function closes the supplied HTTP connection <em>conn</em>,
-including any disposing of any underlying file descriptors or related resources.</p>
-<p>Once this function, no further access to the <em>conn</em> structure may be made.</p>
+including disposal of any underlying file descriptors or related resources.</p>
+<p>Once this function returns, no further access to the <em>conn</em> structure may be made.</p>
 <h3 id="reset-connection-state"><a class="header" href="#reset-connection-state">Reset Connection State</a></h3>
 <pre><code class="language-c">void nng_http_reset(nng_http *conn);
 </code></pre>
 <p>The <a name="a022"></a><code>nng_http_reset</code> function resets the request and response state of the
-the connection <em>conn</em>, so that it is just as if it had been freshly created with
+connection <em>conn</em>, so that it is just as if it had been freshly created with
 <a href="../api/http.html#creating-connections"><code>nng_http_client_connect</code></a> or passed into a handler function for a server callback.</p>
 <p>The intended purpose of this function is to clear the object state before reusing the <em>conn</em> for
 subsequent transactions.</p>
@@ -425,24 +452,25 @@ connection <em>conn</em>, using the <a href="../api/aio.html#scatter-gather-vect
 These functions will complete as soon as any data is transferred.
 Use <a href="../api/aio.html#result-of-operation"><code>nng_aio_count</code></a> to determine how much data was actually transferred.</p>
 <p>The <a name="a025"></a><code>nng_http_read_all</code> and <a name="a026"></a><code>nng_http_write_all</code> functions perform the same task, but will keep resubmitting
-operations until the the entire amount of data requested by the <a href="../api/aio.html#scatter-gather-vectors"><code>nng_iov</code></a> is transferred.</p>
+operations until the entire amount of data requested by the <a href="../api/aio.html#scatter-gather-vectors"><code>nng_iov</code></a> is transferred.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
 <p>These functions perform no special handling for chunked transfers.</p>
 </blockquote>
-<p>These functions are most likely to be useful after hijacking the connection with <a href="../api/http.html#hijacking-connections"><code>nng_http_hijack</code></a>.
+<p>These functions are most likely to be useful after hijacking the connection with <a href="../api/http.html#hijacking-connections"><code>nng_http_hijack_stream</code></a>.
 They can be used to transfer request or response body data as well.</p>
 <h3 id="hijacking-connections"><a class="header" href="#hijacking-connections">Hijacking Connections</a></h3>
-<pre><code class="language-c">nng_err nng_http_hijack(nng_http *conn);
+<pre><code class="language-c">nng_err nng_http_hijack_stream(nng_http *conn, nng_stream **streamp);
 </code></pre>
-<p>TODO: This API will change to convert the conn into a stream object.</p>
-<p>The <a name="a027"></a><code>nng_http_hijack</code> function hijacks the connection <em>conn</em>, causing it
-to be disassociated from the HTTP server where it was created.</p>
-<p>The purpose of this function is the creation of HTTP upgraders (such as
-WebSocket), where the underlying HTTP connection will be taken over for
-some other purpose, and should not be used any further by the server.</p>
+<p>The <a name="a027"></a><code>nng_http_hijack_stream</code> function hijacks the connection <em>conn</em>, causing it
+to be disassociated from the HTTP server where it was created, and returns it as an <a href="../api/stream.html#stream-type"><code>nng_stream</code></a>.
+It is intended for HTTP upgraders, such as WebSocket, that take over the underlying connection.</p>
 <p>This function is most useful when called from a handler function.
-(See <a href="../api/http.html#handlers"><code>nng_http_handler_alloc</code></a>.)</p>
+(See <a href="../api/http.html#implementing-a-handler"><code>nng_http_handler_alloc</code></a>.)</p>
+<p>The stream preserves any bytes already read by the HTTP parser before receiving subsequent data from the underlying connection.
+It takes ownership of <em>conn</em>; after successful completion, <em>conn</em> must not be used or closed separately.
+Release the connection by calling <a href="../api/stream.html#closing-a-stream"><code>nng_stream_free</code></a> on the returned stream.
+It can also be used with a client connection after a protocol-upgrade response has been read.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
 <p>It is the responsibility of the caller to dispose of the underlying connection when it is no longer needed.
@@ -455,9 +483,8 @@ Furthermore, the HTTP server will no longer send any responses to the hijacked c
 Most applications will never need to use this function.</p>
 </blockquote>
 <h3 id="obtaining-tls-connection-details"><a class="header" href="#obtaining-tls-connection-details">Obtaining TLS Connection Details</a></h3>
-<pre><code class="language-c">nng_err nng_http_peer_cert(nng_http_conn *conn, nng_tls_cert **certp);
+<pre><code class="language-c">nng_err nng_http_peer_cert(nng_http *conn, nng_tls_cert **certp);
 </code></pre>
-<p>TODO: We need to document the cert API.</p>
 <p>The <a name="a028"></a><code>nng_http_peer_cert</code> function will obtain the TLS certificate object for the peer, if one is available.
 This can then be used for additional authentication or identity specific logic.</p>
 <p>The certificate must be released with <a href="../api/tls.html#peer-certificates"><code>nng_tls_cert_free</code></a> when no longer in use.
@@ -466,7 +493,7 @@ See <a href="../api/tls.html#peer-certificates"><code>nng_tls_cert</code></a> fo
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
 <p>While it should be obvious that this function is only available when using HTTPS,
 it also requires that peer authentication is in use, and may require that the underlying
-TLS engine support peer certificate colleciton. (Some minimal configurations elide this
+TLS engine support peer certificate collection. (Some minimal configurations elide this
 to save space in embedded environments.)</p>
 </blockquote>
 <h2 id="client-api"><a class="header" href="#client-api">Client API</a></h2>
@@ -476,9 +503,9 @@ transactions on those connections.</p>
 <pre><code class="language-c">typedef struct nng_http_client nng_http_client;
 </code></pre>
 <p>The <a name="a029"></a><code>nng_http_client</code> object is the client side creator for <a href="../api/http.html#connection-object"><code>nng_http</code></a> objects.
-It is analogous to a <a href="../TODO.html">dialer</a> object used elsewhere in NNG, but it specifically is only for HTTP.</p>
+It is analogous to a <a href="../api/endpoint.html">dialer</a> object used elsewhere in NNG, but it specifically is only for HTTP.</p>
 <h3 id="create-a-client"><a class="header" href="#create-a-client">Create a Client</a></h3>
-<pre><code class="language-c">void nng_http_client_alloc(nng_http_client *clientp, const nng_url *url);
+<pre><code class="language-c">nng_err nng_http_client_alloc(nng_http_client **clientp, const nng_url *url);
 </code></pre>
 <p>The <a name="a030"></a><code>nng_http_client_alloc</code> allocates an HTTP client suitable for
 connecting to the server identified by <em>url</em> and stores a pointer to
@@ -518,7 +545,7 @@ void nng_http_client_connect(nng_http_client *client, nng_aio *aio);
 </code></pre>
 <p>The <a name="a035"></a><code>nng_http_client_connect</code> function makes an outgoing connection to the
 server configured for <em>client</em>, and creates an <a href="../api/http.html#connection-object"><code>nng_http</code></a> object for the connection.</p>
-<p>This is done asynchronously, and when the operation succeseds the connection may be
+<p>This is done asynchronously, and when the operation succeeds the connection may be
 retried from the <em>aio</em> using <a href="../api/aio.html#inputs-and-outputs"><code>nng_aio_get_output</code></a> with index 0.</p>
 <h4 id="example-1-connecting-to-google"><a class="header" href="#example-1-connecting-to-google">Example 1: Connecting to Google</a></h4>
 <pre><code class="language-c">nng_aio *aio;
@@ -537,7 +564,7 @@ nng_http_client_connect(client, aio);
 // Wait for connection to establish (or attempt to fail).
 nng_aio_wait(aio);
 
-if ((rv = nng_aio_result(aio)) != 0) {
+if ((rv = nng_aio_result(aio)) != NNG_OK) {
     printf("Connection failed: %s\n", nng_strerror(rv));
 } else {
     // Connection established, get it.
@@ -622,15 +649,110 @@ nng_err nng_http_remote_address(nng_http *conn, nng_sockaddr *addr);
 <p>The <a name="a040"></a><code>nng_http_local_address</code> and <a name="a041"></a><code>nng_http_remote_address</code> functions
 can be used to determine the local and remote addresses for an HTTP connection.
 This can only be done while the connection is alive.</p>
+<h3 id="connection-options"><a class="header" href="#connection-options">Connection Options</a></h3>
+<pre><code class="language-c">nng_err nng_http_get_bool(nng_http *conn, const char *name, bool *value);
+nng_err nng_http_get_int(nng_http *conn, const char *name, int *value);
+nng_err nng_http_get_ms(nng_http *conn, const char *name, nng_duration *value);
+nng_err nng_http_get_size(nng_http *conn, const char *name, size_t *value);
+nng_err nng_http_get_uint64(nng_http *conn, const char *name, uint64_t *value);
+nng_err nng_http_get_string(nng_http *conn, const char *name, const char **value);
+</code></pre>
+<p>These functions retrieve read-only options from the stream underlying an HTTP
+connection. Like other <code>nng_http</code> connection operations, they may only be used
+while the connection is alive; <a href="../api/http.html#closing-the-connection"><code>nng_http_close</code></a> frees the connection. They
+return <a href="../api/errors.html#NNG_ENOTSUP"><code>NNG_ENOTSUP</code></a> when the selected stream does not provide an option.</p>
+<p>For <code>http+unix</code> connections, handlers and clients can use these functions to
+inspect peer identity, including <a href="../tran/ipc.html#NNG_OPT_PEER_UID"><code>NNG_OPT_PEER_UID</code></a>, <a href="../tran/ipc.html#NNG_OPT_PEER_GID"><code>NNG_OPT_PEER_GID</code></a>,
+<a href="../tran/ipc.html#NNG_OPT_PEER_PID"><code>NNG_OPT_PEER_PID</code></a>, and <a href="../tran/ipc.html#NNG_OPT_PEER_ZONEID"><code>NNG_OPT_PEER_ZONEID</code></a>. Availability is platform
+dependent: UID and GID are POSIX-only, PID is available on Windows, Linux, and
+SunOS, and Zone ID is SunOS-only. The same getters can retrieve any other
+supported stream metadata, including metadata on TCP connections.</p>
 <h3 id="response-body"><a class="header" href="#response-body">Response Body</a></h3>
 <h2 id="server-api"><a class="header" href="#server-api">Server API</a></h2>
+<h3 id="server-object"><a class="header" href="#server-object">Server Object</a></h3>
+<pre><code class="language-c">typedef struct nng_http_server nng_http_server;
+</code></pre>
+<p>The <a name="a042"></a><code>nng_http_server</code> object represents a single HTTP server instance.
+At present, a given server instance listens on exactly one local address.</p>
+<p>Server instances are reference counted.
+Applications typically acquire one with <a href="../api/http.html#acquire-a-server"><code>nng_http_server_hold</code></a>, configure it,
+register one or more handlers, optionally install TLS or custom error pages,
+and then start it with <a href="../api/http.html#start-a-server"><code>nng_http_server_start</code></a>.</p>
+<h3 id="acquire-a-server"><a class="header" href="#acquire-a-server">Acquire a Server</a></h3>
+<pre><code class="language-c">nng_err nng_http_server_hold(nng_http_server **serverp, const nng_url *url);
+</code></pre>
+<p>The <a name="a043"></a><code>nng_http_server_hold</code> function acquires an HTTP server instance suitable
+for serving the URL identified by <em>url</em> and stores it in <em>serverp</em>.</p>
+<p>If a suitable server instance already exists, its reference count is incremented
+and that existing instance is returned.
+Otherwise a new server is created with an initial hold on behalf of the caller.</p>
+<p>The server is not started by this function.
+This gives the application an opportunity to configure it before later calling
+<a href="../api/http.html#start-a-server"><code>nng_http_server_start</code></a>.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>The URL matching logic cannot distinguish between every alias for the same
+local IP address. When virtual hosting matters, use canonical names or
+addresses in <em>url</em> to avoid confusion.</p>
+</blockquote>
+<p>This function returns <a href="../api/errors.html#NNG_ENOMEM"><code>NNG_ENOMEM</code></a> if memory cannot be allocated, or
+<a href="../api/errors.html#NNG_ENOTSUP"><code>NNG_ENOTSUP</code></a> if HTTP support is unavailable.</p>
+<h3 id="release-a-server"><a class="header" href="#release-a-server">Release a Server</a></h3>
+<pre><code class="language-c">void nng_http_server_release(nng_http_server *server);
+</code></pre>
+<p>The <a name="a044"></a><code>nng_http_server_release</code> function drops a hold previously obtained on
+<em>server</em>, usually by <a href="../api/http.html#acquire-a-server"><code>nng_http_server_hold</code></a>.</p>
+<p>When the last hold is released, the server and all resources associated with it,
+including registered handlers and active connections, are deallocated.
+If the server is still running at that point, it is stopped first.</p>
+<blockquote class="blockquote-tag blockquote-tag-important">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
+<p>It is an error to release a server that was not previously held, or to
+release it more times than it was held.</p>
+</blockquote>
+<h3 id="start-a-server"><a class="header" href="#start-a-server">Start a Server</a></h3>
+<pre><code class="language-c">nng_err nng_http_server_start(nng_http_server *server);
+</code></pre>
+<p>The <a name="a045"></a><code>nng_http_server_start</code> function starts <em>server</em> listening for
+connections and handling HTTP requests.</p>
+<p>Once a server has been started, configuration that affects listener setup,
+such as TLS, can no longer be changed.</p>
+<p>Each successful call increments an internal start count.
+The server remains active until a matching number of calls to
+<a href="../api/http.html#stop-a-server"><code>nng_http_server_stop</code></a> have been made.</p>
+<p>This function may return <a href="../api/errors.html#NNG_EADDRINUSE"><code>NNG_EADDRINUSE</code></a> if the address or port is already in
+use, <a href="../api/errors.html#NNG_EADDRINVAL"><code>NNG_EADDRINVAL</code></a> if the configured address is invalid, <a href="../api/errors.html#NNG_ENOMEM"><code>NNG_ENOMEM</code></a> if
+memory cannot be allocated, or <a href="../api/errors.html#NNG_ENOTSUP"><code>NNG_ENOTSUP</code></a> if HTTP support is unavailable.</p>
+<h3 id="stop-a-server"><a class="header" href="#stop-a-server">Stop a Server</a></h3>
+<pre><code class="language-c">void nng_http_server_stop(nng_http_server *server);
+</code></pre>
+<p>The <a name="a046"></a><code>nng_http_server_stop</code> function undoes the effect of a previous call
+to <a href="../api/http.html#start-a-server"><code>nng_http_server_start</code></a>.</p>
+<p>Each call decrements the server’s start count.
+When that count reaches zero, the listener is closed and existing client
+connections are shut down.
+This is a hard stop and does not wait for those connections to close
+gracefully.</p>
+<p>Once a server has fully stopped, it cannot be restarted.
+A later call to <a href="../api/http.html#acquire-a-server"><code>nng_http_server_hold</code></a> for the same URL will return a new
+server instance instead.</p>
+<p>Applications usually call <a href="../api/http.html#release-a-server"><code>nng_http_server_release</code></a> after stopping a server
+when they are done with it.</p>
+<h3 id="listening-port"><a class="header" href="#listening-port">Listening Port</a></h3>
+<pre><code class="language-c">nng_err nng_http_server_get_port(nng_http_server *server, int *port);
+</code></pre>
+<p>The <a name="a047"></a><code>nng_http_server_get_port</code> function obtains the TCP port number the
+server is listening on.</p>
+<p>This is most useful when the server was configured to bind to port zero and the
+application needs to discover the dynamically assigned port after
+<a href="../api/http.html#start-a-server"><code>nng_http_server_start</code></a> succeeds.</p>
 <h3 id="server-tls"><a class="header" href="#server-tls">Server TLS</a></h3>
 <pre><code class="language-c">nng_err nng_http_server_get_tls(nng_http_server *server, nng_tls_config **tlsp);
 nng_err nng_http_server_set_tls(nng_http_server *server, nng_tls_config *tls);
 </code></pre>
 <p>The <a href="../api/http.html#server-tls"><code>nng_http_server_get_tls</code></a> and <a href="../api/http.html#server-tls"><code>nng_http_server_set_tls</code></a> functions are used to
 retrieve or change the <a href="../api/tls.html#configuration-objects"><code>nng_tls_config</code></a> used by <em>server</em> when accepting connections,
-enabling <a name="a042"></a>TLS as a result.</p>
+enabling <a name="a048"></a>TLS as a result.</p>
 <p>The <code>nng_http_server_set_tls</code> function overwrites any previous TLS configuration.
 It also invalidates any value previously obtained from <code>nng_http_server_get_tls</code> unless the application
 obtained a separate hold on that object.</p>
@@ -646,10 +768,64 @@ The <code>nng_http_server_set_tls</code> function will return <a href="../api/er
 <p>Server TLS configurations normally need a local certificate and private key, configured with
 <a href="../api/tls.html#certificates-and-keys"><code>nng_tls_config_own_cert</code></a> or <a href="../api/tls.html#certificates-and-keys"><code>nng_tls_config_cert_key_file</code></a>.</p>
 </blockquote>
+<h3 id="registering-a-handler"><a class="header" href="#registering-a-handler">Registering a Handler</a></h3>
+<pre><code class="language-c">nng_err nng_http_server_add_handler(nng_http_server *server, nng_http_handler *handler);
+</code></pre>
+<p>The <a name="a049"></a><code>nng_http_server_add_handler</code> function registers <em>handler</em> with
+<em>server</em>.</p>
+<p>If another handler already exists with a conflicting combination of host,
+method, and URI routing, then the function fails with <a href="../api/errors.html#NNG_EADDRINUSE"><code>NNG_EADDRINUSE</code></a>.</p>
+<p>If a handler is registered with a server, then it is automatically deallocated
+when the server itself is deallocated unless it is first removed with
+<a href="../api/http.html#unregistering-a-handler"><code>nng_http_server_del_handler</code></a>.</p>
+<p>This function may also return <a href="../api/errors.html#NNG_ENOMEM"><code>NNG_ENOMEM</code></a> or <a href="../api/errors.html#NNG_ENOTSUP"><code>NNG_ENOTSUP</code></a>.</p>
+<h3 id="unregistering-a-handler"><a class="header" href="#unregistering-a-handler">Unregistering a Handler</a></h3>
+<pre><code class="language-c">nng_err nng_http_server_del_handler(nng_http_server *server, nng_http_handler *handler);
+</code></pre>
+<p>The <a name="a050"></a><code>nng_http_server_del_handler</code> function removes <em>handler</em> from
+<em>server</em>.</p>
+<p>Once removed, the caller becomes responsible for either freeing the handler
+with <a href="../api/http.html#freeing-handler"><code>nng_http_handler_free</code></a> or registering it with another server instance.</p>
+<p>The function returns <a href="../api/errors.html#NNG_ENOENT"><code>NNG_ENOENT</code></a> if the handler is not currently registered
+with <em>server</em>, or <a href="../api/errors.html#NNG_ENOTSUP"><code>NNG_ENOTSUP</code></a> if HTTP support is unavailable.</p>
+<h3 id="custom-error-pages"><a class="header" href="#custom-error-pages">Custom Error Pages</a></h3>
+<pre><code class="language-c">nng_err nng_http_server_set_error_page(
+    nng_http_server *server, nng_http_status code, const char *html);
+nng_err nng_http_server_set_error_file(
+    nng_http_server *server, nng_http_status code, const char *path);
+</code></pre>
+<p>The <a name="a051"></a><code>nng_http_server_set_error_page</code> and
+<a name="a052"></a><code>nng_http_server_set_error_file</code> functions configure custom error page
+content for the HTTP status <em>code</em> on <em>server</em>.</p>
+<p>The <code>nng_http_server_set_error_page</code> function copies the HTML content from
+<em>html</em> and associates it with <em>code</em>.</p>
+<p>The <code>nng_http_server_set_error_file</code> function behaves similarly, except that it
+loads the content from the file at <em>path</em> when the function is called.
+If that file later changes, call the function again to reload the updated
+contents.</p>
+<p>These custom pages are used for internally generated framework errors, and they
+can also be applied explicitly by a handler with <a href="../api/http.html#applying-a-custom-error-page"><code>nng_http_server_error</code></a>.
+The most recently configured page for a given status code wins, regardless of
+whether it came from the in-memory or file-based variant.</p>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p>If an application directly replaces the response body itself, that body takes
+precedence over any custom error page configured here.</p>
+</blockquote>
+<h3 id="applying-a-custom-error-page"><a class="header" href="#applying-a-custom-error-page">Applying a Custom Error Page</a></h3>
+<pre><code class="language-c">nng_err nng_http_server_error(nng_http_server *server, nng_http *conn);
+</code></pre>
+<p>The <a name="a053"></a><code>nng_http_server_error</code> function replaces the response body on <em>conn</em>
+with the custom error page associated with the response status currently set on
+that connection.</p>
+<p>Applications should call <a href="../api/http.html#http-status"><code>nng_http_set_status</code></a> first to establish the desired
+error status code, then call <code>nng_http_server_error</code> to attach the configured
+HTML body for that status.</p>
+<p>Any response body already present on <em>conn</em> is replaced by this function.</p>
 <h3 id="handlers"><a class="header" href="#handlers">Handlers</a></h3>
 <pre><code class="language-c">typedef struct nng_http_handler nng_http_handler;
 </code></pre>
-<p>An <a name="a043"></a><code>nng_http_handler</code> encapsulates a function used used to handle
+<p>An <a name="a054"></a><code>nng_http_handler</code> encapsulates a function used used to handle
 incoming requests on an HTTP server, routed based on method and URI,
 and the parameters used with that function.</p>
 <p>Every handler has a Request-URI to which it refers, which is determined by the <em>path</em> argument.
@@ -663,23 +839,23 @@ URIs from being supported, but doing so will require setting the handler to matc
 <p>The NNG HTTP framework is optimized for URLs shorter than 200 characters.</p>
 </blockquote>
 <p>Additionally each handler has a method it is registered to handle
-(the default is “GET” andc can be changed with <a href="../api/http.html#setting-the-method"><code>nng_http_handler_set_method</code></a>), and
-optionally a “Host” header it can be matched against (see <a href="../api/http.html#filtering-byt-host"><code>nng_http_handler_set_host</code></a>).</p>
+(the default is “GET” and can be changed with <a href="../api/http.html#setting-the-method"><code>nng_http_handler_set_method</code></a>), and
+optionally a “Host” header it can be matched against (see <a href="../api/http.html#filtering-by-host"><code>nng_http_handler_set_host</code></a>).</p>
 <p>In some cases, a handler may reference a logical tree rather (directory)
 rather than just a single element.
 (See <a href="../api/http.html#handling-an-entire-tree"><code>nng_http_handler_set_tree</code></a>).</p>
 <h3 id="implementing-a-handler"><a class="header" href="#implementing-a-handler">Implementing a Handler</a></h3>
-<pre><code class="language-c">typedef void (*nng_http_handler_func)(nng_http_conn *conn, void *arg, nng_aio *aio);
+<pre><code class="language-c">typedef void (*nng_http_handler_func)(nng_http *conn, void *arg, nng_aio *aio);
 
 nng_err nng_http_handler_alloc(nng_http_handler **hp, const char *path, nng_http_handler_func cb);
 </code></pre>
-<p>The <a name="a044"></a><code>nng_http_handler_alloc</code> function allocates a generic handler
+<p>The <a name="a055"></a><code>nng_http_handler_alloc</code> function allocates a generic handler
 which will be used to process requests coming into an HTTP server.
 On success, a pointer to the handler is stored at the located pointed to by <em>hp</em>.</p>
 <p>The handler function is specified by <em>cb</em>.
 This function uses the asynchronous I/O framework.</p>
 <p>The function receives the connection on <em>conn</em>, and an optional data pointer that was set
-previously with <a href="../api/http.html#setting-the-callback-argument"><code>nng_http_handler_set_data</code></a> as the second argument. The
+previously with <a href="../api/http.html#setting-callback-argument"><code>nng_http_handler_set_data</code></a> as the second argument. The
 final argument is the <a href="../api/aio.html#asynchronous-io-handle"><code>nng_aio</code></a> <em>aio</em>, which must be “finished” to complete the operation.</p>
 <p>The handler may call <a href="../api/http.html#sending-the-response-explicitly"><code>nng_http_write_response</code></a> to send the response, or
 it may simply let the framework do so on its behalf. The server will perform
@@ -703,7 +879,7 @@ sent, if possible, and the connection will be closed.</p>
 <h3 id="freeing-handler"><a class="header" href="#freeing-handler">Freeing Handler</a></h3>
 <pre><code class="language-c">void nng_http_handler_free(nng_http_handler *h);
 </code></pre>
-<p>The <a name="a045"></a><code>nng_http_handler_free</code> function frees an allocated HTTP server handler.
+<p>The <a name="a056"></a><code>nng_http_handler_free</code> function frees an allocated HTTP server handler.
 Normally there is no reason to call this function, because the handler is freed with
 the server it was registered with.</p>
 <blockquote class="blockquote-tag blockquote-tag-important">
@@ -716,18 +892,18 @@ when the server itself is deallocated.</p>
 <pre><code class="language-c">nng_err nng_http_handler_alloc_directory(nng_http_handler **hp, const char *path, const char *dirname);
 nng_err nng_http_handler_alloc_file(nng_http_handler **hp, const char *path, const char *filename);
 </code></pre>
-<p>The <a name="a046"></a><code>nng_http_handler_alloc_directory</code> and <a name="a047"></a><code>nng_http_handler_alloc_file</code>
+<p>The <a name="a057"></a><code>nng_http_handler_alloc_directory</code> and <a name="a058"></a><code>nng_http_handler_alloc_file</code>
 create handlers pre-configured to act as static content servers for either a full
 directory at <em>dirname</em>, or the single file at <em>filename</em>. These support the “GET” and “HEAD”
 methods, and the directory variant will dynamically generate <code>index.html</code> content based on
 the directory contents. These will also set the “Content-Type” if the file extension
-matches one of the built-in values already known. If the no suitable MIME type can be
+matches one of the built-in values already known. If no suitable MIME type can be
 determined, the content type is set to “application/octet-stream”.</p>
 <h3 id="static-handler"><a class="header" href="#static-handler">Static Handler</a></h3>
 <pre><code class="language-c">nng_err nng_http_handler_alloc_static(nng_http_handler **hp, const char *path,
         const void *data, size_t size, const char *content_type);
 </code></pre>
-<p>The <a name="a048"></a><code>nng_http_handler_alloc_static</code> function creates a handler that
+<p>The <a name="a059"></a><code>nng_http_handler_alloc_static</code> function creates a handler that
 serves the content located in <em>data</em> (consisting of <em>size</em> bytes) at the URI <em>path</em>.
 The <em>content_type</em> determines the “Content-Type” header. If <code>NULL</code> is specified
 then a value of <code>application/octet-stream</code> is assumed.</p>
@@ -735,7 +911,7 @@ then a value of <code>application/octet-stream</code> is assumed.</p>
 <pre><code class="language-c">nng_err nng_http_handler_alloc_redirect(nng_http_handler **hp, const char *path,
         nng_http_status status, const char *location);
 </code></pre>
-<p>The <a name="a049"></a><code>nng_http_handler_alloc_redirect</code> function creates a handler with
+<p>The <a name="a060"></a><code>nng_http_handler_alloc_redirect</code> function creates a handler with
 a function that simply directions from the URI at <em>path</em> to the given <em>location</em>.</p>
 <p>The HTTP reply it creates will be with <a href="../api/http.html#http-status">status code</a> <em>status</em>,
 which should be a 3XX code such as 301, and a <code>Location:</code> header will contain the URL
@@ -759,7 +935,7 @@ created with <code>POST</code> should use <a href="../api/http.html#NNG_HTTP_STA
 <h3 id="collecting-request-body"><a class="header" href="#collecting-request-body">Collecting Request Body</a></h3>
 <pre><code class="language-c">void nng_http_handler_collect_body(nng_http_handler *handler, bool want, size_t maxsz);
 </code></pre>
-<p>The <a name="a050"></a><code>nng_http_handler_collect_body</code> function requests that HTTP server
+<p>The <a name="a061"></a><code>nng_http_handler_collect_body</code> function requests that HTTP server
 framework collect any request body for the request and attach it to the
 connection before calling the callback for the <em>handler</em>.</p>
 <p>Subsequently the data can be retrieved by the handler from the request with the
@@ -797,7 +973,7 @@ create few limitations.</p>
 <pre><code class="language-c">void nng_http_handler_set_data(nng_http_handler *handler, void *data,
     void (*dtor)(void *));
 </code></pre>
-<p>The <a name="a051"></a><code>nng_http_handler_set_data</code> function is used to set the
+<p>The <a name="a062"></a><code>nng_http_handler_set_data</code> function is used to set the
 <em>data</em> argument that will be passed to the callback.</p>
 <p>Additionally, when the handler is deallocated, if <em>dtor</em> is not <code>NULL</code>,
 then it will be called with <em>data</em> as its argument.
@@ -805,7 +981,7 @@ The intended use of this function is deallocate any resources associated with <e
 <h3 id="setting-the-method"><a class="header" href="#setting-the-method">Setting the Method</a></h3>
 <pre><code class="language-c">void nng_http_handler_set_method(nng_http_handler *handler, const char *method);
 </code></pre>
-<p>The <a name="a052"></a><code>nng_http_handler_set_method</code> function sets the <em>method</em> that the
+<p>The <a name="a063"></a><code>nng_http_handler_set_method</code> function sets the <em>method</em> that the
 <em>handler</em> will be called for, such as “GET” or “POST”.
 (By default the “GET” method is handled.)</p>
 <p>If <em>method</em> is <code>NULL</code> the handler will be executed for all methods.
@@ -820,7 +996,7 @@ sent for such requests.</p>
 <h3 id="filtering-by-host"><a class="header" href="#filtering-by-host">Filtering by Host</a></h3>
 <pre><code class="language-c">void nng_http_handler_set_host(nng_http_handler *handler, const char *host);
 </code></pre>
-<p>The <a name="a053"></a><code>nng_http_handler_set_host</code> function is used to limit the scope of the
+<p>The <a name="a064"></a><code>nng_http_handler_set_host</code> function is used to limit the scope of the
 <em>handler</em> so that it will only be called when the specified <em>host</em> matches
 the value of the <code>Host:</code> HTTP header.</p>
 <p>This can be used to create servers with different content for different virtual hosts.</p>
@@ -835,12 +1011,12 @@ does not support a single server listening on different ports concurrently.</p>
 <h3 id="detecting-addresses"><a class="header" href="#detecting-addresses">Detecting Addresses</a></h3>
 <p>The <a href="../api/http.html#socket-addresses"><code>nng_http_local_address</code></a> and <a href="../api/http.html#socket-addresses"><code>nng_http_remote_address</code></a> functions
 can be used to determine the local and remote addresses for an HTTP connection
-on the server side (in a handler) just like the can be for HTTP clients
+on the server side (in a handler), just as they can be for HTTP clients.
 This can be useful to provide different handling behaviors based on network identity.</p>
 <h3 id="handling-an-entire-tree"><a class="header" href="#handling-an-entire-tree">Handling an Entire Tree</a></h3>
 <pre><code class="language-c">void nng_http_handler_set_tree(nng_http_handler *handler);
 </code></pre>
-<p>The <a name="a054"></a><code>nng_http_handler_set_tree</code> function causes the <em>handler</em> to be matched if the request URI sent
+<p>The <a name="a065"></a><code>nng_http_handler_set_tree</code> function causes the <em>handler</em> to be matched if the request URI sent
 by the client is a logical child of the path for <em>handler</em>, and no more specific
 <em>handler</em> has been registered.</p>
 <p>This is useful in cases when the handler would like to examine the entire path
@@ -857,7 +1033,7 @@ It can also provide a logical fallback instead of relying on a 404 error code.</
 </code></pre>
 <p>Normally the server will send any attached response, but there are circumstances where
 a response must be sent manually, such as when <a href="../api/http.html#hijacking-connections">hijacking</a> a connection.</p>
-<p>In such a case, <a name="a055"></a><code>nng_http_write_response</code> can be called, which will send the response and any attached data, asynchronously
+<p>In such a case, <a name="a066"></a><code>nng_http_write_response</code> can be called, which will send the response and any attached data, asynchronously
 using the <a href="../api/aio.html#asynchronous-io-handle"><code>nng_aio</code></a> <em>aio</em>.</p>
 <p>By default, for <code>HTTP/1.1</code> connections, the connection is kept open, and
 will be reused to receive new requests. For <code>HTTP/1.0</code>, or if the client has requested
@@ -927,6 +1103,7 @@ response is fully sent.</p>
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="../theme/nng-site-header-834b0e1d.js"></script>
 
 
 

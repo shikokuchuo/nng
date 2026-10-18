@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>TLS - NNG Reference Manual (DRAFT)</title>
+        <title>TLS - NNG Reference Manual</title>
 
 
         <!-- Custom HTML head -->
@@ -28,6 +28,8 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/nng-site-header-b8c364e5.css">
+        <link rel="stylesheet" href="../theme/nng-print-102c8bb7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -35,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-7315db9f.js";
+            window.path_to_searchindex_js = "../searchindex-d6616512.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f5500b13.js"></script>
+        <script src="../toc-c99ee17e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +139,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">NNG Reference Manual (DRAFT)</h1>
+                    <h1 class="menu-title">NNG Reference Manual</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -177,8 +179,8 @@
                         <h1 id="tls"><a class="header" href="#tls">TLS</a></h1>
 <p>NNG provides <a name="a001"></a>TLS (<a name="a002"></a>Transport Layer Security) support for transports and
 stream-based services that need encrypted and authenticated communication.
-TLS is used by the <a href="../tran/tls.html">TLS transport</a>, secure <a href="../tran/websocket.html">WebSocket transport</a>, HTTP clients and servers,
-and raw <a href="../api/stream.html">streams</a> implementations that support it.</p>
+TLS is used by the <a href="../tran/tls.html">TLS transport</a>, <a href="../tran/dtls.html">DTLS transport</a>, secure <a href="../tran/websocket.html">WebSocket transport</a>,
+HTTP clients and servers, and raw <a href="../api/stream.html">streams</a> implementations that support it.</p>
 <p>TLS support depends on a TLS engine being available when NNG is built.
 If TLS support is not enabled, the TLS functions may be present as stubs and will return
 <a href="../api/errors.html#NNG_ENOTSUP"><code>NNG_ENOTSUP</code></a> where appropriate.
@@ -217,6 +219,10 @@ The <code>nng_tls_config_hold</code> function increments that reference count, a
 <p>TLS configuration objects become read-only once they are used to create a connection or service.
 After that point, attempts to modify the configuration will fail with <a href="../api/errors.html#NNG_EBUSY"><code>NNG_EBUSY</code></a>.</p>
 </blockquote>
+<p>A configuration is bound to either stream TLS or datagram DTLS when it is first used to create a connection.
+It may be shared by multiple endpoints of that type, but cannot be reused for the other type;
+such attempts fail with <a href="../api/errors.html#NNG_EINVAL"><code>NNG_EINVAL</code></a>.
+Allocate separate configurations for TLS and DTLS, just as for clients and servers.</p>
 <h2 id="authentication-mode"><a class="header" href="#authentication-mode">Authentication Mode</a></h2>
 <pre><code class="language-c">typedef enum nng_tls_auth_mode {
     NNG_TLS_AUTH_MODE_NONE,
@@ -318,7 +324,7 @@ nng_err nng_listener_set_tls(nng_listener listener, nng_tls_config *cfg);
 <a name="a027"></a>
 <a name="a028"></a>
 The <code>nng_dialer_set_tls</code> and <code>nng_listener_set_tls</code> functions configure TLS for Scalability Protocol
-<a href="../TODO.html">dialer</a> and <a href="../TODO.html">listener</a> objects whose transports support TLS.
+<a href="../api/endpoint.html">dialer</a> and <a href="../api/endpoint.html">listener</a> objects whose transports support TLS.
 These functions must be called before the dialer or listener is started.
 They take their own hold on the configuration object, so the caller may release its reference after a successful call.</p>
 <p>The <code>nng_dialer_get_tls</code> and <code>nng_listener_get_tls</code> functions retrieve the associated configuration object.
@@ -331,7 +337,7 @@ HTTP clients and servers also use TLS configuration objects for HTTPS, including
 secure <a href="../tran/websocket.html">WebSocket transport</a> endpoints; see <a href="../api/http.html#client-tls"><code>nng_http_client_set_tls</code></a> and
 related HTTP APIs.</p>
 <h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
-<p>The following examples use Scalability Protocol <a href="../TODO.html">dialer</a> and <a href="../TODO.html">listener</a> objects.
+<p>The following examples use Scalability Protocol <a href="../api/endpoint.html">dialer</a> and <a href="../api/endpoint.html">listener</a> objects.
 For raw <a href="../api/stream.html">streams</a>, use the same configuration steps, but attach the configuration with
 <a href="../api/stream.html#tls-configuration"><code>nng_stream_dialer_set_tls</code></a> or <a href="../api/stream.html#tls-configuration"><code>nng_stream_listener_set_tls</code></a>.</p>
 <p>The examples use certificate files for clarity.
@@ -541,6 +547,7 @@ The default TLS engine does not support FIPS mode; alternative engines may provi
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="../theme/nng-site-header-834b0e1d.js"></script>
 
 
 

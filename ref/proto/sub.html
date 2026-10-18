@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>SUB Protocol - NNG Reference Manual (DRAFT)</title>
+        <title>SUB Protocol - NNG Reference Manual</title>
 
 
         <!-- Custom HTML head -->
@@ -28,6 +28,8 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/nng-site-header-b8c364e5.css">
+        <link rel="stylesheet" href="../theme/nng-print-102c8bb7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -35,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-7315db9f.js";
+            window.path_to_searchindex_js = "../searchindex-d6616512.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f5500b13.js"></script>
+        <script src="../toc-c99ee17e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +139,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">NNG Reference Manual (DRAFT)</h1>
+                    <h1 class="menu-title">NNG Reference Manual</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -187,7 +189,7 @@ The subscribers maintain their own subscriptions, and filter them locally.
 Thus, this pattern should not be used in an attempt to
 reduce bandwidth consumption.</p>
 </blockquote>
-<p>The topics that subscribers subscribe to is compared to the leading bytes of
+<p>Subscription topics are compared to the leading bytes of
 the message body.
 Applications should construct their messages accordingly.</p>
 <h3 id="socket-operations"><a class="header" href="#socket-operations">Socket Operations</a></h3>
@@ -218,7 +220,7 @@ for receiving.</p>
 int nng_sub0_ctx_unsubscribe(nng_ctx id, const void *buf, size_t sz);
 </code></pre>
 <p>The <a name="a008"></a><code>nng_sub0_ctx_subscribe</code> and <a name="a009"></a><code>nng_sub0_ctx_unsubscribe</code> functions
-perform manage subscriptions for the context in precisely the same way that
+manage subscriptions for the context in precisely the same way that
 <a href="../proto/sub.html#socket-operations"><code>nng_sub0_socket_subscribe</code></a> and <a href="../proto/sub.html#socket-operations"><code>nng_sub0_socket_unsubscribe</code></a> do.</p>
 <p>Each context maintains its own set of subscriptions, and these are also independent
 of socket level subscriptions.</p>
@@ -229,7 +231,7 @@ of socket level subscriptions.</p>
 <tr><th>Option</th><th>Type</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><a name="a010"></a><code>NNG_OPT_SUB_PREF_NEW</code></td><td><code>bool</code></td><td>If <code>true</code> (default), when the receive queue is full, then older unreceived messages will be discarded to make room for newer messages. If <code>false</code>, the older message is preserved and the newer message is discarded.</td></tr>
+<tr><td><a name="a010"></a><code>NNG_OPT_SUB_PREFNEW</code></td><td><code>bool</code></td><td>If <code>true</code> (default), when the receive queue is full, then older unreceived messages will be discarded to make room for newer messages. If <code>false</code>, the older message is preserved and the newer message is discarded.</td></tr>
 </tbody>
 </table>
 </div>
@@ -302,6 +304,7 @@ of socket level subscriptions.</p>
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="../theme/nng-site-header-834b0e1d.js"></script>
 
 
 

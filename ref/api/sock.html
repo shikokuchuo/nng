@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Sockets - NNG Reference Manual (DRAFT)</title>
+        <title>Sockets - NNG Reference Manual</title>
 
 
         <!-- Custom HTML head -->
@@ -28,6 +28,8 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/nng-site-header-b8c364e5.css">
+        <link rel="stylesheet" href="../theme/nng-print-102c8bb7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -35,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-7315db9f.js";
+            window.path_to_searchindex_js = "../searchindex-d6616512.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f5500b13.js"></script>
+        <script src="../toc-c99ee17e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +139,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">NNG Reference Manual (DRAFT)</h1>
+                    <h1 class="menu-title">NNG Reference Manual</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -183,7 +185,7 @@ filtering subscriptions, or automatically retrying requests.</p>
 
 typedef struct nng_socket_s nng_socket;
 </code></pre>
-<p>The <a name="a002"></a><code>nng_socket</code> structure represents socket. This is a handle, and
+<p>The <a name="a002"></a><code>nng_socket</code> structure represents a socket. This is a handle, and
 the members of it are opaque. However, unlike a pointer, it is usually
 passed by value.</p>
 <p>A socket may be initialized statically with the <code>NNG_SOCKET_INITIALIZER</code> macro,
@@ -205,7 +207,7 @@ then the return value may be <code>-1</code>.</p>
 protocol identifier for the socket’s protocol, and of the protocol peers will use when
 communicating with the socket.</p>
 <p>The <a name="a006"></a><code>nng_socket_proto_name</code> and <a name="a007"></a><code>nng_socket_peer_name</code> functions provide the ASCII
-names of the socket’s protocol, and of the protocol peers of the socket use.
+names of the socket’s protocol, and of the protocol peers of the socket will use.
 The value stored in <em>name</em> is a fixed string located in program text, and must not be freed
 or altered. It is guaranteed to remain valid while this library is present.</p>
 <p>The <a name="a008"></a><code>nng_socket_raw</code> function determines whether the socket is in
@@ -251,14 +253,21 @@ int nng_sub0_open_raw(nng_socket *s);
 int nng_surveyor0_open_raw(nng_socket *s);
 </code></pre>
 <p><a name="a021"></a>
-Raw mode sockets are used in circumstances when the application needs direct access
-to the message headers to control the protocol details.</p>
+Most applications use sockets in normal, or <em>cooked</em>, mode. Cooked sockets
+provide the full semantics of the protocol. For example, <a href="../proto/req.html">REQ</a> sockets
+match replies to requests and retransmit requests according to the protocol
+rules.</p>
+<p>Raw mode sockets are used in circumstances when the application needs direct
+access to the message headers to control the protocol details, or when the
+application needs to bypass the normal protocol state machine.</p>
 <p>Such sockets require greater sophistication on the part of the application to use,
 as the application must process the protocol headers specifically.
 The details of the protocol headers, and requirements, are described in the protocol
 documentation for each protocol.</p>
 <p>Raw mode sockets do not have any kind of state machine associated with them, as all of
-the protocol specific processing must be performed by the application.</p>
+the protocol specific processing must be performed by the application. Typically this
+means inspecting protocol headers on incoming messages and supplying the correct
+headers on outgoing messages.</p>
 <blockquote class="blockquote-tag blockquote-tag-tip">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
 <p>Most applications do not need to use raw sockets.
@@ -287,7 +296,7 @@ associated with it. Any operations that are in progress will be terminated with
 a result of <a href="../api/errors.html#NNG_ECLOSED"><code>NNG_ECLOSED</code></a>.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
-<p>Closing a socket also invalidates any <a href="../TODO.html">dialers</a>, <a href="../TODO.html">listeners</a>,
+<p>Closing a socket also invalidates any <a href="../api/endpoint.html">dialers</a>, <a href="../api/endpoint.html">listeners</a>,
 <a href="../api/pipe.html">pipes</a>, or <a href="../api/ctx.html">contexts</a> associated with it.</p>
 </blockquote>
 <blockquote class="blockquote-tag blockquote-tag-note">
@@ -301,7 +310,7 @@ block.</p>
 <p>Closing the socket may be disruptive to transfers that are still in progress.</p>
 </blockquote>
 <h2 id="sending-messages"><a class="header" href="#sending-messages">Sending Messages</a></h2>
-<pre><code class="language-c">int nng_send(nng_socket s, void *data, size_t size, int flags);
+<pre><code class="language-c">int nng_send(nng_socket s, const void *data, size_t size, int flags);
 int nng_sendmsg(nng_socket s, nng_msg *msg, int flags);
 void nng_socket_send(nng_socket s, nng_aio *aio);
 </code></pre>
@@ -336,7 +345,7 @@ such as with <a href="../proto/pub.html">PUB</a> sockets, which are best-effort 
 <p>The <code>nng_sendmsg</code> function sends the <em>msg</em> over the socket <em>s</em>.</p>
 <p>If this function returns zero, then the socket will dispose of <em>msg</em> when the transmission is complete.
 If the function returns a non-zero status, then the call retains the responsibility for disposing of <em>msg</em>.</p>
-<p>The <em>flags</em> can contain the value <a href="../TODO.html"><code>NNG_FLAG_NONBLOCK</code></a>, indicating that the function should not wait if the socket
+<p>The <em>flags</em> can contain the value <a href="../api/sock.html#NNG_FLAG_NONBLOCK"><code>NNG_FLAG_NONBLOCK</code></a>, indicating that the function should not wait if the socket
 cannot accept more data for sending. In such a case, it will return <a href="../api/errors.html#NNG_EAGAIN"><code>NNG_EAGAIN</code></a>.</p>
 <blockquote class="blockquote-tag blockquote-tag-tip">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
@@ -384,11 +393,11 @@ with a status of <a href="../api/errors.html#NNG_EAGAIN"><code>NNG_EAGAIN</code>
 </ul>
 <h3 id="nng_recvmsg"><a class="header" href="#nng_recvmsg">nng_recvmsg</a></h3>
 <p>The <code>nng_recvmsg</code> function receives a message and stores a pointer to the <a href="../api/msg.html#message-structure"><code>nng_msg</code></a> for that message in <em>msgp</em>.</p>
-<p>The <em>flags</em> can contain the value <a href="../TODO.html"><code>NNG_FLAG_NONBLOCK</code></a>, indicating that the function should not wait if the socket
+<p>The <em>flags</em> can contain the value <a href="../api/sock.html#NNG_FLAG_NONBLOCK"><code>NNG_FLAG_NONBLOCK</code></a>, indicating that the function should not wait if the socket
 has no messages available to receive. In such a case, it will return <a href="../api/errors.html#NNG_EAGAIN"><code>NNG_EAGAIN</code></a>.</p>
 <blockquote class="blockquote-tag blockquote-tag-tip">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
-<p>This function is preferred over <a href="../TODO.html"><code>nng_recv</code></a>, as it gives access to the message structure and eliminates both
+<p>This function is preferred over <a href="../api/sock.html#nng_recv"><code>nng_recv</code></a>, as it gives access to the message structure and eliminates both
 a data copy and allocation.</p>
 </blockquote>
 <h3 id="nng_socket_recv"><a class="header" href="#nng_socket_recv">nng_socket_recv</a></h3>
@@ -403,7 +412,7 @@ Failure to do so will leak the memory.</p>
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
 <p>This is the preferred function to use for receiving data on a socket. While it does require a few extra
 steps on the part of the application, the lowest latencies and highest performance will be achieved by using
-this function instead of <a href="../TODO.html"><code>nng_recv</code></a> or <a href="../api/sock.html#nng_recvmsg"><code>nng_recvmsg</code></a>.</p>
+this function instead of <a href="../api/sock.html#nng_recv"><code>nng_recv</code></a> or <a href="../api/sock.html#nng_recvmsg"><code>nng_recvmsg</code></a>.</p>
 </blockquote>
 <h2 id="socket-options"><a class="header" href="#socket-options">Socket Options</a></h2>
 <pre><code class="language-c">int nng_socket_get_bool(nng_socket s, const char *opt, bool *valp);
@@ -411,7 +420,7 @@ int nng_socket_get_int(nng_socket s, const char *opt, int *valp);
 int nng_socket_get_ms(nng_socket s, const char *opt, nng_duration *valp);
 int nng_socket_get_size(nng_socket s, const char *opt, size_t *valp);
 
-int nng_socket_set_bool(nng_socket s, const char *opt, int val);
+int nng_socket_set_bool(nng_socket s, const char *opt, bool val);
 int nng_socket_set_int(nng_socket s, const char *opt, int val);
 int nng_socket_set_ms(nng_socket s, const char *opt, nng_duration val);
 int nng_socket_set_size(nng_socket s, const char *opt, size_t val);
@@ -424,8 +433,8 @@ The <code>nng_socket_set_</code> functions change the value for the socket <em>s
 are available, whether they can be read or written, and the appropriate type to use.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
-<p>Socket options are are used to tune the behavior of the higher level protocol. To change the options
-for an underlying transport, the option should be set on the <a href="../TODO.html">dialer</a> or <a href="../TODO.html">listener</a> instead of the <a href="../api/sock.html">socket</a>.</p>
+<p>Socket options are used to tune the behavior of the higher level protocol. To change the options
+for an underlying transport, the option should be set on the <a href="../api/endpoint.html">dialer</a> or <a href="../api/endpoint.html">listener</a> instead of the <a href="../api/sock.html">socket</a>.</p>
 </blockquote>
 <h3 id="common-options"><a class="header" href="#common-options">Common Options</a></h3>
 <p>The following options are available for many protocols, and always use the same types and semantics described below.</p>
@@ -436,10 +445,10 @@ for an underlying transport, the option should be set on the <a href="../TODO.ht
 </thead>
 <tbody>
 <tr><td><code>NNG_OPT_MAXTTL</code><a name="NNG_OPT_MAXTTL"></a></td><td><code>int</code></td><td>Maximum number of traversals across an <a href="../api/device.html"><code>nng_device</code></a> device, to prevent forwarding loops. May be 1-255, inclusive. Normally defaults to 8.</td></tr>
-<tr><td><code>NNG_OPT_RECONNMAXT</code><a name="NNG_OPT_RECONNMAXT"></a></td><td><code>nng_duration</code></td><td>Maximum time <a href="../TODO.html">dialers</a> will delay before trying after failing to connect.</td></tr>
-<tr><td><code>NNG_OPT_RECONNMINT</code><a name="NNG_OPT_RECONNMINT"></a></td><td><code>nng_duration</code></td><td>Minimum time <a href="../TODO.html">dialers</a> will delay before trying after failing to connect.</td></tr>
-<tr><td><code>NNG_OPT_RECVBUF</code><a name="NNG_OPT_RECVBUF"></a></td><td><code>int</code></td><td>Maximum number of messages (0-8192) to buffer locally when receiving.</td></tr>
-<tr><td><code>NNG_OPT_RECVMAXSZ</code><a name="NNG_OPT_RECVMAXSZ"></a></td><td><code>size_t</code></td><td>Maximum message size acceptable for receiving. Zero means unlimited. Intended to prevent remote abuse. Can be tuned independently on <a href="../TODO.html">dialers</a> and <a href="../TODO.html">listeners</a>.</td></tr>
+<tr><td><code>NNG_OPT_RECONNMAXT</code><a name="NNG_OPT_RECONNMAXT"></a></td><td><code>nng_duration</code></td><td>Maximum time <a href="../api/endpoint.html">dialers</a> will delay before trying after failing to connect.</td></tr>
+<tr><td><code>NNG_OPT_RECONNMINT</code><a name="NNG_OPT_RECONNMINT"></a></td><td><code>nng_duration</code></td><td>Minimum time <a href="../api/endpoint.html">dialers</a> will delay before trying after failing to connect.</td></tr>
+<tr><td><code>NNG_OPT_RECVBUF</code><a name="NNG_OPT_RECVBUF"></a></td><td><code>int</code></td><td>Maximum number of messages (0-8192) to buffer locally when receiving. Not all protocols support receive-side buffering.</td></tr>
+<tr><td><code>NNG_OPT_RECVMAXSZ</code><a name="NNG_OPT_RECVMAXSZ"></a></td><td><code>size_t</code></td><td>Maximum message size acceptable for receiving. Defaults to 1 GiB unless changed at build time. Zero means unlimited. On 64-bit platforms, values above 4 GiB can be configured but are not compatible with 32-bit peers. Intended to prevent remote abuse. Can be tuned independently on <a href="../api/endpoint.html">dialers</a> and <a href="../api/endpoint.html">listeners</a>.</td></tr>
 <tr><td><code>NNG_OPT_RECVTIMEO</code><a name="NNG_OPT_RECVTIMEO"></a></td><td><code>nng_duration</code></td><td>Default timeout (ms) for receiving messages.</td></tr>
 <tr><td><code>NNG_OPT_SENDBUF</code><a name="NNG_OPT_SENDBUF"></a></td><td><code>int</code></td><td>Maximum number of messages (0-8192) to buffer when sending messages.</td></tr>
 <tr><td><code>NNG_OPT_SENDTIMEO</code><a name="NNG_OPT_SENDTIMEO"></a></td><td><code>nng_duration</code></td><td>Default timeout (ms) for sending messages.</td></tr>
@@ -449,9 +458,24 @@ for an underlying transport, the option should be set on the <a href="../TODO.ht
 <p> </p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
-<p>The <code>NNG_OPT_RECONNMAXT</code>, <code>NNG_OPT_RECONNMINT</code>, and <code>NNG_OPT_RECVMAXSZ</code> options are just the initial defaults that <a href="../TODO.html">dialers</a>
-(and for <code>NNG_OPT_RECVMAXSZ</code> also <a href="../TODO.html">listeners</a>)
-will use. After the dialer or listener is created, changes to the socket’s value will have no affect on that dialer or listener.</p>
+<p>The <code>NNG_OPT_RECONNMAXT</code>, <code>NNG_OPT_RECONNMINT</code>, and <code>NNG_OPT_RECVMAXSZ</code> options are just the initial defaults that <a href="../api/endpoint.html">dialers</a>
+(and for <code>NNG_OPT_RECVMAXSZ</code> also <a href="../api/endpoint.html">listeners</a>)
+will use. After the dialer or listener is created, changes to the socket’s value will have no effect on that dialer or listener.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p><code>NNG_OPT_RECVMAXSZ</code> should be configured before creating dialers or
+listeners, especially on hostile networks.
+Keeping it set to a non-zero value helps defend against denial-of-service cases
+where a peer claims an extremely large message size without actually sending
+the payload.</p>
+</blockquote>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p><code>NNG_OPT_MAXTTL</code> is only meaningful for protocols that support forwarding
+through devices.
+Using a consistent value across a topology helps prevent routing loops from
+circulating messages indefinitely.</p>
 </blockquote>
 <h2 id="polling-socket-events"><a class="header" href="#polling-socket-events">Polling Socket Events</a></h2>
 <pre><code class="language-c">int nng_socket_get_recv_poll_fd(nng_socket s, int *fdp);
@@ -477,7 +501,7 @@ were available in previous versions of NNG.</p>
 </blockquote>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
-<p>The file descriptors supplied by these functions is not used for transporting message data.
+<p>The file descriptors supplied by these functions are not used for transporting message data.
 The only valid use of these file descriptors is for polling for the ability to send or receive
 messages on the socket.</p>
 </blockquote>
@@ -512,7 +536,7 @@ void callback(void *arg) {
     nng_msg *msg;
     nng_time now;
     struct state *state = arg;
-    if (nng_aio_result(state-&gt;aio) != 0) {
+    if (nng_aio_result(state-&gt;aio) != NNG_OK) {
         fprintf(stderr, "Error %s occurred", nng_strerror(nng_aio_result(state-&gt;aio)));
         return; // terminate the callback loop
     }
@@ -563,7 +587,7 @@ void callback(void *arg) {
     nng_msg *msg;
     nng_time now;
     struct state *state = arg;
-    if (nng_aio_result(state-&gt;aio) != 0) {
+    if (nng_aio_result(state-&gt;aio) != NNG_OK) {
         fprintf(stderr, "Error %s occurred", nng_strerror(nng_aio_result(state-&gt;aio)));
         return; // terminate the callback loop
     }
@@ -609,7 +633,7 @@ int main(int argc, char **argv) {
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../api/device.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../api/endpoint.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -623,7 +647,7 @@ int main(int argc, char **argv) {
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../api/device.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../api/endpoint.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -652,6 +676,7 @@ int main(int argc, char **argv) {
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="../theme/nng-site-header-834b0e1d.js"></script>
 
 
 

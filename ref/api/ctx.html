@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Contexts - NNG Reference Manual (DRAFT)</title>
+        <title>Contexts - NNG Reference Manual</title>
 
 
         <!-- Custom HTML head -->
@@ -28,6 +28,8 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/nng-site-header-b8c364e5.css">
+        <link rel="stylesheet" href="../theme/nng-print-102c8bb7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -35,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-7315db9f.js";
+            window.path_to_searchindex_js = "../searchindex-d6616512.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f5500b13.js"></script>
+        <script src="../toc-c99ee17e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +139,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">NNG Reference Manual (DRAFT)</h1>
+                    <h1 class="menu-title">NNG Reference Manual</h1>
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -241,7 +243,7 @@ call is executed may also return with an <code>NNG_ECLOSED</code> result.</p>
 void nng_ctx_send(nng_ctx ctx, nng_aio *aio);
 </code></pre>
 <p>These functions (<a name="a009"></a><code>nng_ctx_sendmsg</code> and <a name="a010"></a><code>nng_ctx_send</code>) send
-messages over the socket <em>s</em>. The differences in their behaviors are as follows.</p>
+messages over the context <em>ctx</em>. The differences in their behaviors are as follows.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
 <p>The semantics of what sending a message means varies from protocol to
@@ -254,7 +256,7 @@ while <a href="../proto/sub.html">SUB</a> sockets can only receive data and neve
 <p>The <code>nng_ctx_sendmsg</code> function sends the <em>msg</em> over the context <em>ctx</em>.</p>
 <p>If this function returns zero, then the socket will dispose of <em>msg</em> when the transmission is complete.
 If the function returns a non-zero status, then the call retains the responsibility for disposing of <em>msg</em>.</p>
-<p>The <em>flags</em> can contain the value <a href="../TODO.html"><code>NNG_FLAG_NONBLOCK</code></a>, indicating that the function should not wait if the socket
+<p>The <em>flags</em> can contain the value <a href="../api/sock.html#NNG_FLAG_NONBLOCK"><code>NNG_FLAG_NONBLOCK</code></a>, indicating that the function should not wait if the socket
 cannot accept more data for sending. In such a case, it will return <a href="../api/errors.html#NNG_EAGAIN"><code>NNG_EAGAIN</code></a>.</p>
 <h3 id="nng_ctx_send"><a class="header" href="#nng_ctx_send">nng_ctx_send</a></h3>
 <p>The <code>nng_ctx_send</code> function sends a message asynchronously, using the <a href="../api/aio.html#asynchronous-io-handle"><code>nng_aio</code></a> <em>aio</em>, over the context <em>ctx</em>.
@@ -274,7 +276,7 @@ this function instead of <a href="../api/ctx.html#nng_ctx_sendmsg"><code>nng_ctx
 <pre><code class="language-c">int nng_ctx_recvmsg(nng_ctx ctx, nng_msg **msgp, int flags);
 void nng_ctx_recv(nng_ctx ctx, nng_aio *aio);
 </code></pre>
-<p>These functions (, <a name="a011"></a><code>nng_ctx_recvmsg</code> and <a name="a012"></a><code>nng_ctx_recv</code>) receive
+<p>These functions (<a name="a011"></a><code>nng_ctx_recvmsg</code> and <a name="a012"></a><code>nng_ctx_recv</code>) receive
 messages over the context <em>ctx</em>. The differences in their behaviors are as follows.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
@@ -283,12 +285,12 @@ protocol, so examination of the protocol documentation is encouraged.
 Additionally, some protocols may not support receiving at all or may require other pre-conditions first.
 (For example, <a href="../proto/req.html">REQ</a> sockets cannot normally receive data until they have first sent a request.)</p>
 </blockquote>
-<h3 id="nng_recvmsg"><a class="header" href="#nng_recvmsg">nng_recvmsg</a></h3>
+<h3 id="nng_ctx_recvmsg"><a class="header" href="#nng_ctx_recvmsg">nng_ctx_recvmsg</a></h3>
 <p>The <code>nng_ctx_recvmsg</code> function receives a message and stores a pointer to the <a href="../api/msg.html#message-structure"><code>nng_msg</code></a> for that message in <em>msgp</em>.</p>
-<p>The <em>flags</em> can contain the value <a href="../TODO.html"><code>NNG_FLAG_NONBLOCK</code></a>, indicating that the function should not wait if the socket
+<p>The <em>flags</em> can contain the value <a href="../api/sock.html#NNG_FLAG_NONBLOCK"><code>NNG_FLAG_NONBLOCK</code></a>, indicating that the function should not wait if the socket
 has no messages available to receive. In such a case, it will return <a href="../api/errors.html#NNG_EAGAIN"><code>NNG_EAGAIN</code></a>.</p>
-<h3 id="nng_socket_recv"><a class="header" href="#nng_socket_recv">nng_socket_recv</a></h3>
-<p>The <code>nng_ctx_send</code> function receives a message asynchronously, using the <a href="../api/aio.html#asynchronous-io-handle"><code>nng_aio</code></a> <em>aio</em>, over the context <em>ctx</em>.
+<h3 id="nng_ctx_recv"><a class="header" href="#nng_ctx_recv">nng_ctx_recv</a></h3>
+<p>The <code>nng_ctx_recv</code> function receives a message asynchronously, using the <a href="../api/aio.html#asynchronous-io-handle"><code>nng_aio</code></a> <em>aio</em>, over the context <em>ctx</em>.
 On success, the received message can be retrieved from the <em>aio</em> using the <a href="../api/aio.html#messages"><code>nng_aio_get_msg</code></a> function.</p>
 <blockquote class="blockquote-tag blockquote-tag-note">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
@@ -307,13 +309,13 @@ int nng_ctx_get_int(nng_ctx ctx, const char *opt, int *valp);
 int nng_ctx_get_ms(nng_ctx ctx, const char *opt, nng_duration *valp);
 int nng_ctx_get_size(nng_ctx ctx, const char *opt, size_t *valp);
 
-int nng_ctx_set_bool(nng_ctx ctx, const char *opt, int val);
+int nng_ctx_set_bool(nng_ctx ctx, const char *opt, bool val);
 int nng_ctx_set_int(nng_ctx ctx, const char *opt, int val);
 int nng_ctx_set_ms(nng_ctx ctx, const char *opt, nng_duration val);
 int nng_ctx_set_size(nng_ctx ctx, const char *opt, size_t val);
 </code></pre>
 <p>Some protocols support certain options that affect the behavior of a specific context.
-For example, most protocols will let you set the defaults timeouts associated with
+For example, most protocols will let you set the default timeouts associated with
 send or receive separately for different contexts.</p>
 <p>These functions are used to retrieve or change the value of an option named <em>opt</em> from the context <em>ctx</em>.
 The <code>nng_ctx_get_</code> functions retrieve the value from <em>ctx</em>, and store it in the location <em>valp</em> references.
@@ -324,7 +326,7 @@ are available for contexts, whether they can be read or written, and the appropr
 <p>These examples show building blocks for a concurrent service based on contexts.</p>
 <h3 id="example-1-context-echo-server"><a class="header" href="#example-1-context-echo-server">Example 1: Context Echo Server</a></h3>
 <p>The following program fragment demonstrates the use of contexts to implement
-a concurrent <a href="../proto/rep.html">REP</a> service that simply echos messages back
+a concurrent <a href="../proto/rep.html">REP</a> service that simply echoes messages back
 to the sender.</p>
 <pre><code class="language-c">struct echo_context {
     nng_ctx ctx;
@@ -343,7 +345,7 @@ echo(void *arg)
         nng_ctx_recv(ec-&gt;ctx, ec-&gt;aio);
         return;
     case RECV:
-        if (nng_aio_result(ec-&gt;aio) != 0) {
+        if (nng_aio_result(ec-&gt;aio) != NNG_OK) {
             // ... handle error
         }
         // We reuse the message on the ec-&gt;aio
@@ -351,7 +353,7 @@ echo(void *arg)
         nng_ctx_send(ec-&gt;ctx, ec-&gt;aio);
         return;
     case SEND:
-        if (nng_aio_result(ec-&gt;aio) != 0) {
+        if (nng_aio_result(ec-&gt;aio) != NNG_OK) {
             // ... handle error
         }
         ec-&gt;state = RECV;
@@ -363,7 +365,7 @@ echo(void *arg)
 <h3 id="example-2-starting-the-echo-service"><a class="header" href="#example-2-starting-the-echo-service">Example 2: Starting the Echo Service</a></h3>
 <p>Given the above fragment, the following example shows setting up the service.
 It assumes that the <a href="../api/sock.html">socket</a> has already been
-created and any transports set up as well with functions such as <a href="../TODO.html"><code>nng_dial</code></a> or <a href="../TODO.html"><code>nng_listen</code></a>.</p>
+created and any transports set up as well with functions such as <a href="../api/endpoint.html#creating-and-starting"><code>nng_dial</code></a> or <a href="../api/endpoint.html#creating-and-starting"><code>nng_listen</code></a>.</p>
 <pre><code class="language-c">
 #define CONCURRENCY 1024
 
@@ -445,6 +447,7 @@ start_echo_service(nng_socket rep_socket)
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="../theme/nng-site-header-834b0e1d.js"></script>
 
 
 
